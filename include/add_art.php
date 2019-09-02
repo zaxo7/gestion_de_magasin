@@ -1,7 +1,7 @@
 <?php if(isset($_SESSION['logged']) && !$_SESSION['logged']) header('location:index.php'); ?>
 <div id="tab_list">
 	<form action="action.php?add_art" method="post">
-		<input type="text" name="nom" placeholder="Nom">
+		<input type="text" name="nom" placeholder="Nom" required>
 		<br>
 		<label>famille<select name="F">
 			<?php

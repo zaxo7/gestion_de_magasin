@@ -136,6 +136,24 @@
 		else
 			header('location:index.php?list_art&error');
 	}
+	//supprimer une famille
+	else if(isset($_GET['del_F']))
+	{
+		$ans = $bdd->prepare('DELETE FROM F WHERE id_F = ?');
+		if($ans->execute(array($_GET['del_F'])))
+			header('location:index.php?list_FSF&ok');
+		else
+			header('location:index.php?list_FSF&error');
+	}
+	//supprimer une sous famille
+	else if(isset($_GET['del_SF']))
+	{
+		$ans = $bdd->prepare('DELETE FROM SF WHERE id_SF = ?');
+		if($ans->execute(array($_GET['del_SF'])))
+			header('location:index.php?list_FSF&ok');
+		else
+			header('location:index.php?list_FSF&error');
+	}
 	//vendre
 	else if(isset($_GET['out_stock']))
 	{

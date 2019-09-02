@@ -1,7 +1,7 @@
 <?php if(isset($_SESSION['logged']) && !$_SESSION['logged']) header('location:index.php');?>
 <div id="add-mag-div">
 	<form action="action.php?add_mag" method="post">
-		<p>Lien du magasain : <input id="inp-mag" type="text" name="lien"></p>
+		<p>Lien du magasain : <input id="inp-mag" type="text" name="lien" required></p>
 		<input type="submit" value="ajouter">
 	</form>
 	<br><br>

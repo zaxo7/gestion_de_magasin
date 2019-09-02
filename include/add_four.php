@@ -2,9 +2,9 @@
 <div>
 	<form action="action.php?add_four" method="post">
 		<br>
-		<label>Nom<input type="text" name="nom"></label>
-		<label>Prenom<input type="text" name="prenom"></label>
-		<label>adresse<input type="text" name="adresse"></label>
+		<label>Nom<input type="text" name="nom" required></label>
+		<label>Prenom<input type="text" name="prenom" required></label>
+		<label>adresse<input type="text" name="adresse" required></label>
 		<input type="submit" value="ajouter">
 	</form>
 	<br><br>

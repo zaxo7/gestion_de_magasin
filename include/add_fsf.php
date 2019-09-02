@@ -21,8 +21,8 @@ if(!isset($_SESSION['flag'])) $_SESSION['flag'] = 1;
 		Famille</h1>
 
 		<form action="action.php?add_<?php if($tmp) echo 'S'; ?>F" method="post">
-			<label>Nom<input type="text" name="nom"></label>
-			<label>Cod<input type="text" name="code" maxlength="<?php if($tmp) echo '2'; else echo '1'; ?>"></label>
+			<label>Nom<input type="text" name="nom" required></label>
+			<label>Cod<input type="text" name="code" required maxlength="<?php if($tmp) echo '2'; else echo '1'; ?>"></label>
 			<?php 
 				if($tmp)
 				{

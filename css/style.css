@@ -115,6 +115,11 @@ h1, h2, h3, h4, h5, h6, figure {
   width: 250px;
   text-align: left;
 }
+#fsf-list a[href*="del_"]
+{
+  text-decoration: none;
+  color: red;
+}
 
 #vendre_inp
 {

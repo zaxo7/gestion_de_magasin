@@ -32,7 +32,7 @@ if(!isset($_SESSION['flag'])) $_SESSION['flag'] = 1;
 				foreach ($_SESSION['stock'] as $raw) {
 					if($raw[0] != '')
 						echo "<tr> <td><h1>$raw[6]</h1></td> <td><h1>$raw[7]</h1></td>	<td><h1>$raw[3]</h1></td> <td><h1>$raw[4]</h1></td> <td><h1>$raw[5]</h1></td> <td style='width:150px;'>
-					<form id='inline-form' action='action.php?out_stock=" . $_GET['list_stock'] . "&mag=" . $_GET['mag'] ."' method='post'><input type='submit' value='vendre'><input type='number' name='qte' id='vendre_inp'> unitées <input type='hidden' name='mag' value='$raw[1]'><input type='hidden' name='art' value='$raw[2]'>  </form></td>";
+					<form id='inline-form' action='action.php?out_stock=" . $_GET['list_stock'] . "&mag=" . $_GET['mag'] ."' method='post'><input type='submit' value='vendre'><input type='number' name='qte' id='vendre_inp' required> unitées <input type='hidden' name='mag' value='$raw[1]'><input type='hidden' name='art' value='$raw[2]'>  </form></td>";
 				}
 				//initialiser pour la prochaine fois
 				$_SESSION['flag'] = 1;
