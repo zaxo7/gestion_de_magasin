@@ -243,7 +243,8 @@
 			$ans = $bdd->prepare(' SELECT mag.lien,fiche_stock.cod_mag,fiche_stock.id_art,fiche_stock.date_e,fiche_stock.qte,fiche_stock.pu,article.nom,article.cod_art FROM fiche_stock INNER JOIN mag ON fiche_stock.cod_mag = mag.cod_mag INNER JOIN article ON fiche_stock.id_art = article.id_art WHERE fiche_stock.cod_mag = ?');
 		else
 		{
-			$ans = $bdd->prepare('select * from (SELECT cod_mag,id_art,cod_four,date_e,qte,pu FROM entrer UNION SELECT cod_mag,id_art,"x",date_s,qte,pu FROM sortie) AS es JOIN article ON article.id_art = es.id_art WHERE es.cod_mag = ?');
+			$ans = $bdd->prepare('select * from (SELECT cod_mag,id_art,cod_four,date_e,qte,pu FROM entrer UNION SELECT cod_mag,id_art,"x",date_s,qte,pu FROM sortie) AS es JOIN article ON article.id_art = es.id_art WHERE es.cod_mag = ? ORDER BY es.date_e DESC');
+			
 			$ans2 = $bdd->query('select * from fourniseur');
 			$i = 0;
 			while($_SESSION['four'][$i++] = $ans2->fetch());
@@ -253,19 +254,6 @@
 		$i = 0;
 		while($_SESSION['stock'][$i++] = $ans->fetch());
 
-		// foreach ($_SESSION['stock'] as $stock) {
-		// 	if($stock['cod_four'] != 'x')
-		// 	{
-		// 		foreach ($_SESSION['four'] as $four) 
-		// 		{
-		// 			if($stock['cod_four'] == $four['Cod_four'])
-		// 			{
-		// 				$stock['cod_four'] = 'zaxo';
-		// 				echo $stock['cod_four'];
-		// 			}
-		// 		}
-		// 	}
-		// }
 		header('location:' . $_SESSION['referer']);
 
 	}
@@ -287,6 +275,14 @@
 	//créer un compte
 	else if(isset($_GET['register']))
 	{
+		//test the first register
+		$ans = $bdd->prepare('SELECT id_user FROM users');
+		$ans->execute(array($_POST['psuedo']));
+		//si n y a pas d'utilisateurs inscrit comme un admin directement
+		if($ans->fetch() == '')
+			$status = 0;
+		else
+			$status = -1;
 		//tester si le psuedo existe
 		$ans = $bdd->prepare('SELECT id_user FROM users WHERE psuedo = ?');
 		$ans->execute(array($_POST['psuedo']));
@@ -295,8 +291,8 @@
 		if($ans->fetch() != '')
 			header('location:index.php?register&exists');
 
-		$ans = $bdd->prepare('INSERT INTO users (nom,prenom,psuedo,email,ddn,password,poste) VALUES (?,?,?,?,?,?,?)');
-		if($ans->execute(array($_POST['nom'],$_POST['pnom'],$_POST['psuedo'],$_POST['email'],$_POST['ddn'],$_POST['password'],$_POST['poste'])))
+		$ans = $bdd->prepare('INSERT INTO users (nom,prenom,psuedo,email,ddn,password,poste,status) VALUES (?,?,?,?,?,?,?,?)');
+		if($ans->execute(array($_POST['nom'],$_POST['pnom'],$_POST['psuedo'],$_POST['email'],$_POST['ddn'],$_POST['password'],$_POST['poste'],$status)))
 			header('location:index.php?ok');
 		else
 			header('location:index.php?register&erreur = 2');

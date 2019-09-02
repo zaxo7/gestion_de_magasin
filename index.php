@@ -87,7 +87,6 @@ session_start();
 				</center>
 				</div>
 		</div>
-		<script type="text/javascript" src="js/gp.js"></script>
 		<?php 
 			}
 			//si l'utilisateur n'est pas connecté
@@ -104,45 +103,47 @@ session_start();
 			<form action = "action.php?register" method="POST">
 				<label>
 					psuedo 
-					<input type="text" name="psuedo" autofocus="" >
+					<input type="text" name="psuedo" autofocus="" required>
 				</label>
 				<label>
 					Nom
-					<input type="text" name="nom" > 
+					<input type="text" name="nom" required> 
 				</label>
 				<label>
 					Prenom
-					<input type="text" name="pnom">
+					<input type="text" name="pnom" required>
 				</label>
 				<label>
 					email
-					<input type="email" name="email">
+					<input type="email" name="email" required>
 				</label>
 				<label>
 					Date de naissance
-					<input type="date" name="ddn">
+					<input type="date" name="ddn" required>
 				</label>
 				<label>
 					Mot de passe
-					<input type="password" name="password">
+					<input id="pass" type="password" name="password" required>
 				</label>
 				<label>
 					confirmation
-					<input type="password" name="cpassword">
+					<input id="cpass" type="password" name="cpassword" required>
 				</label>
 				<label>
 					poste
-					<input type="text" name="poste">
+					<input type="text" name="poste" required>
 				</label>
-				<input type="submit" name="register" value="Register">
+				<input type="submit" name="register" value="Register" onclick="return pass_check('#pass','#cpass','register')">
 			</form>
+			<br><br>
+			<a href="index.php?login"><button>Retour</button></a>
 			<?php 
 				}
 				//mot de passe oublié
 				else if(isset($_GET['forgot']))
 				{ 
 			?>
-			<form action = "action.php?forgot" method="POST">
+			<form action = "action.php?forgot" method="POST" >
 			<label>email  <input type="text" name="email" autofocus=""></label>
 			<input type="hidden" name="do" value="reset">
 			<input align="center" type="submit" name="reset" value="Reset">
@@ -188,5 +189,6 @@ session_start();
 			//ce fichier contient des alertes de status
 			include('include/error.php');
 		?>
+		<script type="text/javascript" src="js/gp.js"></script>
 	</body>
 </html>

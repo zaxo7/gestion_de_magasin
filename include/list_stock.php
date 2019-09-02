@@ -33,8 +33,8 @@ if(!isset($_SESSION['flag'])) $_SESSION['flag'] = 1;
 		<td><h1>fourniseur</h1></td>	
 		<?php }else {?>
 		<td><h1>Nom</h1></td>
-		<td><h1>Code</h1></td>
 		<?php } ?>	
+		<td><h1>Code</h1></td>
 		<td><h1>Date</h1></td>
 		<td><h1>Quantité</h1></td>
 		<td><h1>Prix <?php if(!isset($_GET['historique'])) echo ' moy'; echo '</h1></td>';
@@ -86,5 +86,5 @@ if(!isset($_SESSION['flag'])) $_SESSION['flag'] = 1;
 		?>
 	</table>
 	<br><br>
-	<a href="index.php?list_mag"><button>Retour</button></a>
+	<a href="index.php?<?php if(isset($_GET['historique'])) echo 'list_stock=' . $_GET['list_stock'] . '&mag=' . $_GET['mag']; else echo 'list_mag';?>"><button>Retour</button></a>
 </div>

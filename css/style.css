@@ -135,6 +135,18 @@ button , input[type=submit]
   padding: 4px;
   margin: 2px;
 }
+input
+{
+  background-color: #3d3d3d;
+  border: 0;
+  color: white;
+  height: 20px;
+  border-radius: 4px;
+}
+input[type=submit]
+{
+  padding-bottom: 21px;
+}
 button:hover , input[type=submit]:hover
 {
   color: #3d3d3d;
