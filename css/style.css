@@ -16,7 +16,7 @@ body {
 
 nav 
 {
-	opacity: 0.35;
+	opacity: 0.5;
 }
 
 .containertop {
@@ -32,6 +32,7 @@ nav
   margin: 0 auto;
   margin-bottom: 1em;
   background: #9E9E9E;
+  opacity: 0.8;
 }
 
 

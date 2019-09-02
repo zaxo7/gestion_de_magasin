@@ -115,7 +115,7 @@ BEGIN
 
 	INSERT INTO sortie (cod_mag,id_art,date_s,qte,pu) SELECT p_cod_mag, p_id_art, NOW(), p_qte, Pu FROM Fiche_stock WHERE Cod_mag = p_cod_mag AND Id_art = p_id_art ;
 	
-	IF (SELECT DISTINCT Qte FROM Fiche_stock WHERE Cod_mag = p_cod_mag AND Id_art = p_id_art) > p_qte
+	IF (SELECT DISTINCT Qte FROM Fiche_stock WHERE Cod_mag = p_cod_mag AND Id_art = p_id_art) > p_qte AND p_qte > 0
 	THEN
 		UPDATE Fiche_stock SET Qte = Qte - p_qte WHERE Cod_mag = p_cod_mag AND Id_art = p_id_art;
 	ELSEIF (SELECT DISTINCT Qte FROM Fiche_stock WHERE Cod_mag = p_cod_mag AND Id_art = p_id_art) = p_qte
