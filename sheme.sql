@@ -88,39 +88,43 @@ CREATE TABLE users
 	ddn DATE,
 	password CHAR(30) NOT NULL,
 	poste CHAR(30) NOT NULL,
-	status INT(1) DEFAULT 0
+	status INT(1) DEFAULT -1
 );
 
 
 DELIMITER //
 CREATE PROCEDURE in_stock (IN p_cod_mag INT(3), IN p_id_art INT(5), IN p_cod_four INT(4), IN p_qte INT(4),IN p_pu FLOAT)
 BEGIN
-	INSERT INTO entrer (Cod_mag,Id_art,cod_four,Date_e,Qte,Pu) VALUES (p_cod_mag,p_id_art,p_cod_four,NOW(),p_qte,p_pu);
-	
-	IF EXISTS(SELECT cod_mag FROM Fiche_stock WHERE Cod_mag = p_cod_mag AND Id_art = p_id_art)
+	IF p_qte > 0
 	THEN
-		SELECT DISTINCT pu,qte INTO @pum,@qte FROM Fiche_stock WHERE Cod_mag = p_cod_mag AND Id_art = p_id_art;
-		SET @pum = ((@pum * @qte) + (p_pu * p_qte))/(@qte+p_qte);
-		UPDATE Fiche_stock SET Qte = Qte + p_qte , pu = @pum WHERE Cod_mag = p_cod_mag AND Id_art = p_id_art;
-	ELSE
-		INSERT INTO Fiche_stock (Cod_mag,Id_art,Date_e,Qte,Pu) VALUES (p_cod_mag,p_id_art,NOW(),p_qte,p_pu);
-	END IF;
+		INSERT INTO entrer (Cod_mag,Id_art,cod_four,Date_e,Qte,Pu) VALUES (p_cod_mag,p_id_art,p_cod_four,NOW(),p_qte,p_pu);
+		IF EXISTS(SELECT cod_mag FROM Fiche_stock WHERE Cod_mag = p_cod_mag AND Id_art = p_id_art)
+		THEN
+			SELECT DISTINCT pu,qte INTO @pum,@qte FROM Fiche_stock WHERE Cod_mag = p_cod_mag AND Id_art = p_id_art;
+			SET @pum = ((@pum * @qte) + (p_pu * p_qte))/(@qte+p_qte);
+			UPDATE Fiche_stock SET Qte = Qte + p_qte , pu = @pum WHERE Cod_mag = p_cod_mag AND Id_art = p_id_art;
+		ELSE
+			INSERT INTO Fiche_stock (Cod_mag,Id_art,Date_e,Qte,Pu) VALUES (p_cod_mag,p_id_art,NOW(),p_qte,p_pu);
+		END IF;
 
+	END IF;
 END//
 DELIMITER ;
 
 DELIMITER //
 CREATE PROCEDURE out_stock (IN p_cod_mag INT(3), IN p_id_art INT(5), IN p_qte INT(4))
 BEGIN
-
-	INSERT INTO sortie (cod_mag,id_art,date_s,qte,pu) SELECT p_cod_mag, p_id_art, NOW(), p_qte, Pu FROM Fiche_stock WHERE Cod_mag = p_cod_mag AND Id_art = p_id_art ;
-	
-	IF (SELECT DISTINCT Qte FROM Fiche_stock WHERE Cod_mag = p_cod_mag AND Id_art = p_id_art) > p_qte AND p_qte > 0
+	IF p_qte > 0
 	THEN
-		UPDATE Fiche_stock SET Qte = Qte - p_qte WHERE Cod_mag = p_cod_mag AND Id_art = p_id_art;
-	ELSEIF (SELECT DISTINCT Qte FROM Fiche_stock WHERE Cod_mag = p_cod_mag AND Id_art = p_id_art) = p_qte
-	THEN
-		DELETE FROM Fiche_stock WHERE Cod_mag = p_cod_mag AND Id_art = p_id_art;
+		INSERT INTO sortie (cod_mag,id_art,date_s,qte,pu) SELECT p_cod_mag, p_id_art, NOW(), p_qte, Pu FROM Fiche_stock WHERE Cod_mag = p_cod_mag AND Id_art = p_id_art ;
+		
+		IF (SELECT DISTINCT Qte FROM Fiche_stock WHERE Cod_mag = p_cod_mag AND Id_art = p_id_art) > p_qte
+		THEN
+			UPDATE Fiche_stock SET Qte = Qte - p_qte WHERE Cod_mag = p_cod_mag AND Id_art = p_id_art;
+		ELSEIF (SELECT DISTINCT Qte FROM Fiche_stock WHERE Cod_mag = p_cod_mag AND Id_art = p_id_art) = p_qte
+		THEN
+			DELETE FROM Fiche_stock WHERE Cod_mag = p_cod_mag AND Id_art = p_id_art;
+		END IF;
 	END IF;
 END//
 DELIMITER ;

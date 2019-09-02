@@ -1,6 +1,6 @@
 <?php
 	if(isset($_SESSION['logged']) && !$_SESSION['logged']) header('location:index.php'); 
-	if(!isset($_SESSION['flag'])) $_SESSION['flagi'] = 1;
+	if(!isset($_SESSION['flag'])) $_SESSION['flag'] = 1;
 ?>
 <div>
 	<table id="table-list" align="center">

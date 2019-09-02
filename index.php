@@ -73,15 +73,21 @@ session_start();
 				{
 					include('include/list_stock.php');
 				}
+				else if(isset($_GET['compte']))
+				{
+					include('include/compte.php');
+				}
+				
 				else
 				{
-					
+					include('include/list_mag.php'); 
 				}
 				?>
 				<br>
 				</center>
 				</div>
 		</div>
+		<script type="text/javascript" src="js/gp.js"></script>
 		<?php 
 			}
 			//si l'utilisateur n'est pas connecté

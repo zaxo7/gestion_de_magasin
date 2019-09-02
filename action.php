@@ -154,6 +154,15 @@
 		else
 			header('location:index.php?list_FSF&error');
 	}
+	//supprimer un utilisateur
+	else if(isset($_GET['del_user']))
+	{
+		$ans = $bdd->prepare('DELETE FROM users WHERE id_user = ?');
+		if($ans->execute(array($_GET['del_user'])))
+			header("location:index.php?compte&userm=" . $_GET['userm'] . "&ok=user deleted");
+		else
+			header("location:index.php?compte&userm=" . $_GET['userm'] . "&error");
+	}
 	//vendre
 	else if(isset($_GET['out_stock']))
 	{
@@ -230,41 +239,119 @@
 	//lister le stock
 	else if(isset($_GET['list_stock']))
 	{
-		
-		$ans = $bdd->prepare(' SELECT mag.lien,fiche_stock.cod_mag,fiche_stock.id_art,fiche_stock.date_e,fiche_stock.qte,fiche_stock.pu,article.nom,article.cod_art FROM fiche_stock INNER JOIN mag ON fiche_stock.cod_mag = mag.cod_mag INNER JOIN article ON fiche_stock.id_art = article.id_art WHERE fiche_stock.cod_mag = ?');
+		if(!isset($_GET['historique']))
+			$ans = $bdd->prepare(' SELECT mag.lien,fiche_stock.cod_mag,fiche_stock.id_art,fiche_stock.date_e,fiche_stock.qte,fiche_stock.pu,article.nom,article.cod_art FROM fiche_stock INNER JOIN mag ON fiche_stock.cod_mag = mag.cod_mag INNER JOIN article ON fiche_stock.id_art = article.id_art WHERE fiche_stock.cod_mag = ?');
+		else
+		{
+			$ans = $bdd->prepare('select * from (SELECT cod_mag,id_art,cod_four,date_e,qte,pu FROM entrer UNION SELECT cod_mag,id_art,"x",date_s,qte,pu FROM sortie) AS es JOIN article ON article.id_art = es.id_art WHERE es.cod_mag = ?');
+			$ans2 = $bdd->query('select * from fourniseur');
+			$i = 0;
+			while($_SESSION['four'][$i++] = $ans2->fetch());
+		}
 		$ans->execute(array($_GET['list_stock']));
 
 		$i = 0;
 		while($_SESSION['stock'][$i++] = $ans->fetch());
 
+		// foreach ($_SESSION['stock'] as $stock) {
+		// 	if($stock['cod_four'] != 'x')
+		// 	{
+		// 		foreach ($_SESSION['four'] as $four) 
+		// 		{
+		// 			if($stock['cod_four'] == $four['Cod_four'])
+		// 			{
+		// 				$stock['cod_four'] = 'zaxo';
+		// 				echo $stock['cod_four'];
+		// 			}
+		// 		}
+		// 	}
+		// }
 		header('location:' . $_SESSION['referer']);
 
 	}
+	else if(isset($_GET['list_users']))
+	{
+		
+		$ans = $bdd->prepare(' SELECT * FROM users WHERE status = ?');
+		$ans->execute(array((int)$_GET['list_users']));
 
+		$i = 0;
+		while($_SESSION['users'][$i++] = $ans->fetch());
+
+		header('location:' . $_SESSION['referer'] . $_GET['list_users']);
+	}
 
 
 
 //accounts 
-
+	//créer un compte
 	else if(isset($_GET['register']))
 	{
+		//tester si le psuedo existe
+		$ans = $bdd->prepare('SELECT id_user FROM users WHERE psuedo = ?');
+		$ans->execute(array($_POST['psuedo']));
+
+		//si il existe retourne une erreur
+		if($ans->fetch() != '')
+			header('location:index.php?register&exists');
+
 		$ans = $bdd->prepare('INSERT INTO users (nom,prenom,psuedo,email,ddn,password,poste) VALUES (?,?,?,?,?,?,?)');
 		if($ans->execute(array($_POST['nom'],$_POST['pnom'],$_POST['psuedo'],$_POST['email'],$_POST['ddn'],$_POST['password'],$_POST['poste'])))
-			header('location:index.php?');
+			header('location:index.php?ok');
 		else
-			header('location:index.php?register&erreur');
+			header('location:index.php?register&erreur = 2');
 	}
+	//changer le mot de passe
+	else if(isset($_GET['edit_pass']))
+	{
+		//tester l'ancien mdp
+		$ans =$bdd->prepare('SELECT id_user FROM users WHERE psuedo = ? AND password = ?');
+		if(!$ans->execute(array($_SESSION['psuedo'],$_POST['ancien'])))
+			header('location:index.php?compte&change&error=current error 1');
+		//en teste le résultat
+		if(($id = $ans->fetch()) != '')
+		{
+			$ans = $bdd->prepare('UPDATE users SET password = ? WHERE id_user = ?');
+			if(!$ans->execute(array($_POST['nouv'],$id[0])))
+				header('location:index.php?compte&change&error=new pass error 1');
+			else
+				header('location:action.php?logout');
+
+		}
+		else
+			header('location:index.php?compte&change&error=current error 2');
+	}
+	//upgrade and accept users
+	else if(isset($_GET['upg_user']))
+	{
+		if(isset($_GET['a']))
+			$ans = $bdd->prepare("UPDATE users SET status = 0 WHERE id_user = ?");
+		else
+			$ans = $bdd->prepare("UPDATE users SET status = 1 WHERE id_user = ?");
+		if(!$ans->execute(array($_GET['upg_user'])))
+			header('location:index.php?compte&userm=' . $_GET['userm'] . '&error');
+		else
+			header('location:index.php?compte&userm=' . $_GET['userm'] . '&ok');
+
+
+	}
+	//login
 	else if(isset($_GET['login']))
 	{
-		$ans = $bdd->prepare('SELECT id_user FROM users WHERE psuedo = ? AND password = ?');
+		$ans = $bdd->prepare('SELECT * FROM users WHERE psuedo = ? AND password = ? AND status != -1');
+		//login avec cookie or manuel
 		if(isset($_GET['c']))
 			$ans->execute(array($_COOKIE['name'],$_COOKIE['password']));
 		else
 			$ans->execute(array($_POST['name'],$_POST['password']));
 
-		if($ans->fetch() != '')
+		if(($ans = $ans->fetch()) != '')
 		{
 			$_SESSION['logged'] = 1;
+			$_SESSION['nom'] = $ans[1];
+			$_SESSION['prenom'] = $ans[2];
+			$_SESSION['psuedo'] = $ans[3];
+			$_SESSION['status'] = $ans[8];
 			if(isset($_POST['mem']))
 			{
 				setcookie('name',$_POST['name'],-1);
@@ -274,16 +361,16 @@
 		}
 		else
 		{
-			header('location:index.php?error');
+			header('location:index.php?error= compte n\'existe pas ou n\'est pas activé ');
 		}
 	}
+	//logout
 	else if(isset($_GET['logout']))
 	{
-		$_SESSION['logged'] = 0;
-		unset($_SESSION['logged']);
+		session_destroy();
 		setcookie('name','',0);
 		setcookie('password','',0);
-		header('location:index.php');
+		header('location:index.php?login');
 	}
 
 ?>

@@ -3,7 +3,7 @@
 	<form action="action.php?add_art" method="post">
 		<input type="text" name="nom" placeholder="Nom" required>
 		<br>
-		<label>famille<select name="F">
+		<label>famille<select id="F" name="F" onchange="giveSelection(this.value)" onshow="init_select()">
 			<?php
 			//si les variables familles et sous familles existe
 			if(isset($_SESSION['F']) && isset($_SESSION['SF']))
@@ -27,19 +27,21 @@
 			?>
 		</select></label>
 		<br>
-		<label>sous_famille<select name="SF">
+		<label>sous_famille<select id="SF" name="SF">
 			<?php 
 			//parcour pour chaque famille ses sous familles
+			$i = 0;
 			foreach ($_SESSION['SF'] as $famille) 
 			{
 				foreach ($famille as $SF_raw) 
 				{
 					if($SF_raw[0] != '')	
 					{
-						echo "<option value='$SF_raw[1]'";
+						echo "<option data-option='" .  $_SESSION['F'][$i][1] . "' value='$SF_raw[1]'";
 						echo ">$SF_raw[2]</option>";
 					}
 				}
+				$i++;
 			}
 			//suppression de variables
 			unset($_SESSION['SF']);
