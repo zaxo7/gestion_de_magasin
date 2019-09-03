@@ -357,7 +357,7 @@
 		}
 		else
 		{
-			header('location:index.php?error= compte n\'existe pas ou n\'est pas activé ');
+			header('location:index.php?error');
 		}
 	}
 	//logout

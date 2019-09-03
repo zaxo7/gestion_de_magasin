@@ -30,7 +30,7 @@ if(!isset($_SESSION['flag'])) $_SESSION['flag'] = 1;
 		<tr>
 		<?php if(isset($_GET['historique'])) { ?>
 		<td><h1>action</h1></td>	
-		<td><h1>fourniseur</h1></td>	
+		<td><h1>fournisseur</h1></td>	
 		<?php }else {?>
 		<td><h1>Nom</h1></td>
 		<?php } ?>	
