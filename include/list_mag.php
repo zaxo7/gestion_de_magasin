@@ -31,7 +31,7 @@
 				//parcour des magasins
 				foreach ($_SESSION['Mag'] as $raw) {
 					if($raw[0] != '')
-						echo "<tr> <td><h1>$raw[1]</h1></td> <td> <a href='index.php?list_stock=$raw[0]&mag=$raw[1]'><button>fiche stock</button></a><a href='action.php?del_mag=$raw[0]'><button>supprimer</button></a></td>";
+						echo "<tr> <td><h1>$raw[1]</h1></td> <td> <a href='index.php?list_stock=$raw[0]&mag=$raw[1]'><button>fiche stock</button></a><a href='action.php?del_mag=$raw[0]'><button onclick='return confirm(\"Êtes-vous sûr ?\")'>supprimer</button></a></td>";
 				}
 
 				$_SESSION['flag'] = 1;

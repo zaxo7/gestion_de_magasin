@@ -28,7 +28,7 @@
 				//parcour de la table chargée dans action.php
 				foreach ($_SESSION['art'] as $raw) {
 					if($raw[0] != '')
-						echo "<tr><td>$raw[0]</td><td>$raw[1]</td><td>$raw[2]</td><td>$raw[4]</td><td>$raw[3]</td></td><td><a href='action.php?del_art=$raw[0]'><button>supprimer</button></a></td>";		
+						echo "<tr><td>$raw[0]</td><td>$raw[1]</td><td>$raw[2]</td><td>$raw[4]</td><td>$raw[3]</td></td><td><a href='action.php?del_art=$raw[0]'><button onclick='return confirm(\"Êtes-vous sûr ?\")'>supprimer</button></a></td>";		
 				}
 
 				$_SESSION['flag'] = 1;

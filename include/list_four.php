@@ -27,7 +27,7 @@ if(!isset($_SESSION['flag'])) $_SESSION['flag'] = 1; ?>
 				{
 					foreach ($_SESSION['four'] as $raw) {
 						if($raw[0] != '')
-							echo "<tr> <td><h1>$raw[1]</h1></td> <td><h1>$raw[2]</h1></td>  <td> <h1>$raw[3]</h1></td> <td> <a href='action.php?del_four=$raw[0]'><button>supprimer</button></a></td></tr>";
+							echo "<tr> <td><h1>$raw[1]</h1></td> <td><h1>$raw[2]</h1></td>  <td> <h1>$raw[3]</h1></td> <td> <a href='action.php?del_four=$raw[0]'><button onclick='return confirm(\"Êtes-vous sûr ?\")'>supprimer</button></a></td></tr>";
 					}
 					//initialiser pour la prochaine fois
 					$_SESSION['flag'] = 1;
