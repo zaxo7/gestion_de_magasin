@@ -143,12 +143,13 @@ session_start();
 				else if(isset($_GET['forgot']))
 				{ 
 			?>
-			<form action = "action.php?forgot" method="POST" >
+			<form action = "#" method="POST" >
 			<label>email  <input type="text" name="email" autofocus=""></label>
 			<input type="hidden" name="do" value="reset">
 			<input align="center" type="submit" name="reset" value="Reset">
 			</form>
-
+			<br><br>
+			<a href="index.php?login"><button>Retour</button></a>
 			<?php 
 				}
 				//si les deux cookies sont présent il test le login avec leur valeurs en ajoutent le parm c
