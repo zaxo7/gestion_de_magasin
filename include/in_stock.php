@@ -13,7 +13,7 @@ if(!isset($_SESSION['flag'])) $_SESSION['flag'] = 1;
 					//pour ne pas rentre la prochaine fois
 					$_SESSION['flag'] = 0;
 					//referer c'est pour conserver le parametres + fichier
-					$_SESSION['referer'] = 'index.php?in_stock=' . $_GET['in_stock'];
+					$_SESSION['referer'] = 'index.php?in_stock=' . $_GET['in_stock'] . '&mag=' . $_GET['mag'];
 					header('location:action.php?list_art_four');
 				}
 				//parcour de la table chargée dans action.php
@@ -46,5 +46,7 @@ if(!isset($_SESSION['flag'])) $_SESSION['flag'] = 1;
 		<input type="hidden" name="mag" value="<?php echo $_GET['in_stock']; ?>">
 		<br>
 		<input type="submit" value="ajouter">
+		<br>
 	</form>
+		<a href="index.php?<?php echo 'list_stock=' . $_GET['in_stock'] . '&mag=' . $_GET['mag'];?>"><button>Retour</button></a>
 </div>

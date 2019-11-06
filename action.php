@@ -166,11 +166,23 @@
 	//vendre
 	else if(isset($_GET['out_stock']))
 	{
-		$ans = $bdd->prepare("call out_stock(?,?,?)");
-		if($ans->execute(array($_POST['mag'],$_POST['art'],$_POST['qte'])))
-			header('location:index.php?list_stock=' . $_GET['out_stock'] . '&mag=' . $_GET['mag'] . '&ok');
-		else
-			header('location:index.php?list_stock=' . $_GET['out_stock'] . '&mag=' . $_GET['mag'] . '&error');
+		$i = 0;
+		$size = sizeof($_POST);
+		$data = array();
+		foreach ($_POST as $key => $value) {
+			$data[$i] = $value;
+			$i++;
+		}
+		$i = 0;
+		while($i < $size)
+		{
+			$ans = $bdd->prepare("call out_stock(?,?,?)");
+			if(!$ans->execute(array($_GET['out_stock'],$data[$i+1],$data[$i])))
+				header('location:index.php?list_stock=' . $_GET['out_stock'] . '&mag=' . $_GET['mag'] . '&error');
+
+			$i = $i + 2;
+		}
+		header('location:index.php?list_stock=' . $_GET['out_stock'] . '&mag=' . $_GET['mag'] . '&ok');
 	}
 
 	//listing

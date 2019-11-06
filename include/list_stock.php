@@ -11,22 +11,27 @@ if(!isset($_SESSION['flag'])) $_SESSION['flag'] = 1;
 			//pour ne pas rentre la prochaine fois
 			$_SESSION['flag'] = 0;
 			//referer c'est pour conserver le parametres + fichier
-			if(!isset($_GET['historique']))
-			$_SESSION['referer'] = 'index.php?list_stock=' . $_GET['list_stock'] . '&mag=' . $_GET['mag'];
+			
+
+			
 			if(isset($_GET[historique])) 
 			{	
 				$_SESSION['referer'] .= '&historique';
 				header('location:action.php?list_stock=' . $_GET['list_stock'] . '&historique');
 			}
 			else
+			{
+				$_SESSION['referer'] = 'index.php?list_stock=' . $_GET['list_stock'] . '&mag=' . $_GET['mag'];
 				header('location:action.php?list_stock=' . $_GET['list_stock']);
+			}
+				
 		}
 		//parcour de la table chargée dans action.php
 		else
 		{
 	?>
-	<h1>Fiche du stock de <?php echo $_GET['mag']; ?></h1>
-	<table id="table-list">
+		<h1>Fiche du stock de <?php echo $_GET['mag']; ?></h1>
+		<table id="table-list">
 		<tr>
 		<?php if(isset($_GET['historique'])) { ?>
 		<td><h1>action</h1></td>	
@@ -41,17 +46,21 @@ if(!isset($_SESSION['flag'])) $_SESSION['flag'] = 1;
 		if(!isset($_GET['historique']))
 		{
 		?>
-		<td><a href="index.php?in_stock=<?php echo $_GET['list_stock']; ?>"><button>Acheter</button><a href="index.php?list_stock=<?php echo $_GET['list_stock'] . '&mag=' . $_GET['mag']; ?>&historique"><button>Historique</button></td>
+		<td><a href="index.php?in_stock=<?php echo $_GET['list_stock']. '&mag=' . $_GET['mag']; ?>"><button>Acheter</button><a href="index.php?list_stock=<?php echo $_GET['list_stock'] . '&mag=' . $_GET['mag']; ?>&historique"><button>Historique</button></td>
 		<?php } ?>
 		</tr>
 		<?php
 			if(!isset($_GET['historique']))
 			{
+				echo "<form id='inline-form' action='action.php?out_stock=" . $_GET['list_stock'] . "&mag=" . $_GET['mag'] . "' method='post'>";
 				foreach ($_SESSION['stock'] as $raw) {
 					if($raw[0] != '')
-						echo "<tr> <td><h1>$raw[6]</h1></td> <td><h1>$raw[7]</h1></td>	<td><h1>$raw[3]</h1></td> <td><h1>$raw[4]</h1></td> <td><h1>$raw[5]</h1></td> <td style='width:150px;'>
-					<form id='inline-form' action='action.php?out_stock=" . $_GET['list_stock'] . "&mag=" . $_GET['mag'] ."' method='post'><input type='submit' value='vendre'><input type='number' name='qte' id='vendre_inp' required> unitées <input type='hidden' name='mag' value='$raw[1]'><input type='hidden' name='art' value='$raw[2]'>  </form></td>";
+						echo "<tr> <td><h1>$raw[6]</h1></td> <td><h1>$raw[7]</h1></td>	<td><h1>$raw[3]</h1></td> <td><h1>$raw[4]</h1></td> <td><h1>$raw[5]</h1></td> <td style='width:150px;'> <label id='lab_inline'>Vendre</label>
+					<input type='number' name='qte_$raw[7]' value = '0' id='vendre_inp' required> unitées <input type='hidden' name='id_art_$raw[7]' value='$raw[2]'></td>";
 				}
+				echo "</table>
+				<input type='submit' value='vendre'>
+				</form>";
 			}
 			else
 			{
@@ -75,6 +84,7 @@ if(!isset($_SESSION['flag'])) $_SESSION['flag'] = 1;
 						echo '<td><h1>' . $raw['Cod_art'] . '</h1></td> <td><h1>' . $raw['date_e'] .'</h1></td>	<td><h1>' . $raw['qte'] . ' </h1></td> <td><h1>' . $raw['pu'] . '</tr>';
 					}
 				}
+				echo "</table>";
 			}
 
 			//supprimer les données chargée
@@ -84,7 +94,8 @@ if(!isset($_SESSION['flag'])) $_SESSION['flag'] = 1;
 		}
 
 		?>
-	</table>
+	
+	
 	<br><br>
 	<a href="index.php?<?php if(isset($_GET['historique'])) echo 'list_stock=' . $_GET['list_stock'] . '&mag=' . $_GET['mag']; else echo 'list_mag';?>"><button>Retour</button></a>
 </div>

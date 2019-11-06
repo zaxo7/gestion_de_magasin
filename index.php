@@ -21,6 +21,7 @@ session_start();
 									<li><a href="index.php?list_mag">Magazains</a></li>
 									<li><a href="index.php?compte">Compte</a></li>
 									<li><a href="action.php?logout">Déconnection</a></li>
+									<li style="padding-left: 45%;"><a>zaxo7</a></li>
 								</ul>			
 				</div>
 			</nav>

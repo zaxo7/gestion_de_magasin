@@ -115,14 +115,14 @@ DELIMITER //
 CREATE PROCEDURE out_stock (IN p_cod_mag INT(3), IN p_id_art INT(5), IN p_qte INT(4))
 BEGIN
 	IF p_qte > 0
-	THEN
-		INSERT INTO sortie (cod_mag,id_art,date_s,qte,pu) SELECT p_cod_mag, p_id_art, NOW(), p_qte, Pu FROM Fiche_stock WHERE Cod_mag = p_cod_mag AND Id_art = p_id_art ;
-		
+	THEN	
 		IF (SELECT DISTINCT Qte FROM Fiche_stock WHERE Cod_mag = p_cod_mag AND Id_art = p_id_art) > p_qte
 		THEN
+			INSERT INTO sortie (cod_mag,id_art,date_s,qte,pu) SELECT p_cod_mag, p_id_art, NOW(), p_qte, Pu FROM Fiche_stock WHERE Cod_mag = p_cod_mag AND Id_art = p_id_art ;
 			UPDATE Fiche_stock SET Qte = Qte - p_qte WHERE Cod_mag = p_cod_mag AND Id_art = p_id_art;
 		ELSEIF (SELECT DISTINCT Qte FROM Fiche_stock WHERE Cod_mag = p_cod_mag AND Id_art = p_id_art) = p_qte
 		THEN
+			INSERT INTO sortie (cod_mag,id_art,date_s,qte,pu) SELECT p_cod_mag, p_id_art, NOW(), p_qte, Pu FROM Fiche_stock WHERE Cod_mag = p_cod_mag AND Id_art = p_id_art ;
 			DELETE FROM Fiche_stock WHERE Cod_mag = p_cod_mag AND Id_art = p_id_art;
 		END IF;
 	END IF;
