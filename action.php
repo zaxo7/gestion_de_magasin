@@ -7,21 +7,19 @@
 	//ajouter magasin
 	if(isset($_GET['add_mag']))
 	{
-		if(isset($_POST['lien']))
-		{
-			$ans = $bdd->prepare("INSERT INTO Mag (lien) VALUES (?)");
-			if($ans->execute(array($_POST['lien'])))
-				header('location:index.php?list_mag');
-			else
-				header('location:index.php?list_mag&error');
-		}
+		
+		$ans = $bdd->prepare("INSERT INTO Mag (affaire,lieu,chefprojet,date_cr) VALUES (?,?,?,NOW())");
+		if($ans->execute(array($_POST['aff'], $_POST['lieu'], $_POST['chef'])))
+			header('location:index.php?list_mag');
+		else
+			header('location:index.php?list_mag&error');
 	}
 	//ajouter une famille
 	else if(isset($_GET['add_F']))
 	{
 		//prepare c pour éviter les injections
 		//tester si le code de famille existe
-		$ans = $bdd->prepare('SELECT Id_F FROM F where Cod_F = ?');
+		$ans = $bdd->prepare('SELECT Desig_F FROM F where Cod_F = ?');
 		$ans->execute(array(strtoupper($_POST['code'])));
 		//extraire une ligne
 		$i = $ans->fetch();
@@ -31,7 +29,7 @@
 		//insertion
 		else
 		{
-			$ans = $bdd->prepare('INSERT INTO F (Nom_F,Cod_F) VALUES (?,?)');
+			$ans = $bdd->prepare('INSERT INTO F (Desig_F,Cod_F) VALUES (?,?)');
 			if($ans->execute(array($_POST['nom'],strtoupper($_POST['code']))))
 				header('location:index.php?add_F&ok');
 			else
@@ -41,8 +39,8 @@
 	//ajouter sous famille
 	else if(isset($_GET['add_SF']))
 	{
-		//tester lea famille si il existe
-		$ans = $bdd->prepare('SELECT id_f FROM F WHERE cod_F = ?');
+		//tester lea famille si elle existe
+		$ans = $bdd->prepare('SELECT Cod_f FROM F WHERE cod_F = ?');
 		$ans->execute(array(strtoupper($_POST['famille'])));
 
 		$t = $ans->fetch();
@@ -51,7 +49,7 @@
 		if($t[0] != NULL)
 		{
 			//tester le code de sous famille si il existe deja
-			$ans = $bdd->prepare("SELECT Id_SF FROM SF where Cod_SF = ? and Id_F = $t[0]");
+			$ans = $bdd->prepare("SELECT Cod_SF FROM SF where Cod_SF = ? and Cod_F = '$t[0]'");
 			if(!$ans->execute(array(strtoupper($_POST['code']))))
 				header('location:index.php?add_SF&error');
 
@@ -64,7 +62,7 @@
 			else
 			{
 				//on ajoute la sous famille
-				$ans = $bdd->prepare('INSERT INTO SF (Nom_SF,Cod_SF,Id_F) VALUES (?,?,?)');
+				$ans = $bdd->prepare('INSERT INTO SF (Desig_SF,Cod_SF,Cod_F) VALUES (?,?,?)');
 				if($ans->execute(array($_POST['nom'],strtoupper($_POST['code']),$t[0])))
 					header('location:index.php?add_SF&ok');
 				else
@@ -98,6 +96,16 @@
 			header('location:index.php?add_four&error');
 
 	}
+	//ajouter un chef de projet
+	else if(isset($_GET['add_chef']))
+	{
+		$ans = $bdd->prepare('INSERT INTO chef_proj (nom,prenom) VALUES (?,?)');
+		if($ans->execute(array($_POST['nom'],$_POST['prenom'])))
+			header('location:index.php?add_chef&ok');
+		else
+			header('location:index.php?add_chef&error');
+
+	}
 	//acheter 
 	else if(isset($_GET['in_stock']))
 	{
@@ -127,10 +135,19 @@
 		else
 			header('location:index.php?list_four&error');
 	}
+	//supprimer un chef de projet
+	else if(isset($_GET['del_chef']))
+	{
+		$ans = $bdd->prepare("DELETE FROM chef_proj WHERE cod_chef = ?");
+		if($ans->execute(array($_GET['del_chef'])))
+			header('location:index.php?list_chef&ok');
+		else
+			header('location:index.php?list_chef&error');
+	}
 	//supprimer un article
 	else if(isset($_GET['del_art']))
 	{
-		$ans = $bdd->prepare("DELETE FROM article WHERE id_art = ?");
+		$ans = $bdd->prepare("DELETE FROM article WHERE Cod_art = ?");
 		if($ans->execute(array($_GET['del_art'])))
 			header('location:index.php?list_art&ok');
 		else
@@ -139,7 +156,7 @@
 	//supprimer une famille
 	else if(isset($_GET['del_F']))
 	{
-		$ans = $bdd->prepare('DELETE FROM F WHERE id_F = ?');
+		$ans = $bdd->prepare('DELETE FROM F WHERE Cod_F = ?');
 		if($ans->execute(array($_GET['del_F'])))
 			header('location:index.php?list_FSF&ok');
 		else
@@ -148,7 +165,7 @@
 	//supprimer une sous famille
 	else if(isset($_GET['del_SF']))
 	{
-		$ans = $bdd->prepare('DELETE FROM SF WHERE id_SF = ?');
+		$ans = $bdd->prepare('DELETE FROM SF WHERE Cod_SF = ?');
 		if($ans->execute(array($_GET['del_SF'])))
 			header('location:index.php?list_FSF&ok');
 		else
@@ -189,10 +206,12 @@
 	//lister les magasins
 	else if(isset($_GET['list_mag']))
 	{
-		$ans = $bdd->query('SELECT * FROM Mag');
+		$ans = $bdd->query('SELECT * FROM Mag INNER JOIN chef_proj ON Mag.chefprojet = chef_proj.cod_chef');
 		$i = 0;
 		//charger le résultat dans la variable globale
 		while($_SESSION['Mag'][$i++] = $ans->fetch());
+
+
 		header('location:index.php?list_mag');
 	}
 
@@ -208,7 +227,7 @@
 		$j = 0;
 		foreach ($_SESSION['F'] as $FAMILLE)
 		{
-			$ans2 = $bdd->prepare('SELECT * FROM SF WHERE id_F = ?');
+			$ans2 = $bdd->prepare('SELECT * FROM SF WHERE Cod_F = ?');
 			$ans2->execute(array($_SESSION['F'][$j][0]));
 			$i = 0;
 			while($_SESSION['SF'][$j][$i++] = $ans2->fetch());
@@ -220,7 +239,7 @@
 	//lister les articles
 	else if(isset($_GET['list_art']))
 	{
-		$ans = $bdd->query('select article.id_art,article.cod_art,article.nom,sf.nom_sf,f.nom_f From article INNER JOIN SF ON SF.Id_SF =  article.Id_sf INNER JOIN F ON F.id_F = SF.Id_F');
+		$ans = $bdd->query('select article.cod_art,article.Desig_art,sf.Desig_sf,f.Desig_f From article INNER JOIN SF ON SF.Cod_SF =  article.Cod_sf INNER JOIN F ON F.cod_F = SF.cod_F');
 		$i = 0;
 		while($_SESSION['art'][$i++] = $ans->fetch());
 
@@ -235,6 +254,15 @@
 
 		header('location:' . $_SESSION['referer']);
 	}
+	//lister les chefs du projet
+	else if(isset($_GET['list_chef']))
+	{
+		$ans = $bdd->query('SELECT cod_chef,nom,prenom FROM chef_proj');
+		$i = 0;
+		while($_SESSION['chef'][$i++] = $ans->fetch());
+
+		header('location:' . $_SESSION['referer']);
+	}
 	//lister les fourniseurs et les articles
 	else if(isset($_GET['list_art_four']))
 	{
@@ -242,7 +270,7 @@
 		$i = 0;
 		while($_SESSION['four'][$i++] = $ans->fetch());
 
-		$ans = $bdd->query('select article.id_art,article.cod_art,article.nom,sf.nom_sf,f.nom_f From article INNER JOIN SF ON SF.Id_SF =  article.Id_sf INNER JOIN F ON F.id_F = SF.Id_F');
+		$ans = $bdd->query('select article.Cod_art,article.cod_art,article.nom,sf.nom_sf,f.nom_f From article INNER JOIN SF ON SF.Cod_SF =  article.Cod_sf INNER JOIN F ON F.Cod_F = SF.Cod_F');
 		$i = 0;
 		while($_SESSION['art'][$i++] = $ans->fetch());
 
@@ -252,10 +280,10 @@
 	else if(isset($_GET['list_stock']))
 	{
 		if(!isset($_GET['historique']))
-			$ans = $bdd->prepare(' SELECT mag.lien,fiche_stock.cod_mag,fiche_stock.id_art,fiche_stock.date_e,fiche_stock.qte,fiche_stock.pu,article.nom,article.cod_art FROM fiche_stock INNER JOIN mag ON fiche_stock.cod_mag = mag.cod_mag INNER JOIN article ON fiche_stock.id_art = article.id_art WHERE fiche_stock.cod_mag = ?');
+			$ans = $bdd->prepare(' SELECT mag.lien,fiche_stock.cod_mag,fiche_stock.Cod_art,fiche_stock.date_e,fiche_stock.qte,fiche_stock.pu,article.nom,article.cod_art FROM fiche_stock INNER JOIN mag ON fiche_stock.cod_mag = mag.cod_mag INNER JOIN article ON fiche_stock._art = article._art WHERE fiche_stock.cod_mag = ?');
 		else
 		{
-			$ans = $bdd->prepare('select * from (SELECT cod_mag,id_art,cod_four,date_e,qte,pu FROM entrer UNION SELECT cod_mag,id_art,"x",date_s,qte,pu FROM sortie) AS es JOIN article ON article.id_art = es.id_art WHERE es.cod_mag = ? ORDER BY es.date_e DESC');
+			$ans = $bdd->prepare('select * from (SELECT cod_mag,Cod_art,cod_four,date_e,qte,pu FROM entrer UNION SELECT cod_mag,Cod_art,"x",date_s,qte,pu FROM sortie) AS es JOIN article ON article.Cod_art = es.Cod_art WHERE es.cod_mag = ? ORDER BY es.date_e DESC');
 			
 			$ans2 = $bdd->query('select * from fourniseur');
 			$i = 0;

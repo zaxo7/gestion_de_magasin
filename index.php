@@ -66,6 +66,10 @@ session_start();
 				{
 					include('include/list_four.php');
 				}
+				else if(isset($_GET['list_chef']))
+				{
+					include('include/list_chef.php');
+				}
 				else if(isset($_GET['in_stock']))
 				{
 					include('include/in_stock.php');
@@ -73,6 +77,10 @@ session_start();
 				else if(isset($_GET['list_stock']))
 				{
 					include('include/list_stock.php');
+				}
+				else if(isset($_GET['add_chef']))
+				{
+					include('include/add_chef.php');
 				}
 				else if(isset($_GET['compte']))
 				{

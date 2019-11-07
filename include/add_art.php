@@ -13,8 +13,8 @@
 				{
 					if($F_raw[0] != '')	
 					{
-						echo "<option value='$F_raw[1]'";
-						echo ">$F_raw[2]</option>";
+						echo "<option value='$F_raw[0]'";
+						echo ">$F_raw[1]</option>";
 					}
 				}
 			}
@@ -37,8 +37,8 @@
 				{
 					if($SF_raw[0] != '')	
 					{
-						echo "<option data-option='" .  $_SESSION['F'][$i][1] . "' value='$SF_raw[1]'";
-						echo ">$SF_raw[2]</option>";
+						echo "<option data-option='" .  $_SESSION['F'][$i][0] . "' value='$SF_raw[0]'";
+						echo ">$SF_raw[1]</option>";
 					}
 				}
 				$i++;

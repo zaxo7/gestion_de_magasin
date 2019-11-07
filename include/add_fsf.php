@@ -49,9 +49,9 @@ if(!isset($_SESSION['flag'])) $_SESSION['flag'] = 1;
 						{
 							if($F_raw[0] != '')	
 							{
-								echo "<option value='$F_raw[1]'";
-								if(isset($_SESSION['get_params'][$F_raw[1]])) echo 'selected';
-								echo ">$F_raw[2]</option>";
+								echo "<option value='$F_raw[0]'";
+								if(isset($_SESSION['get_params'][$F_raw[0]])) echo 'selected';
+								echo ">$F_raw[1]</option>";
 							}
 						}
 						echo "</select></label>";
