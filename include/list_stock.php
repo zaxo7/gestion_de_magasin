@@ -17,11 +17,14 @@ if(!isset($_SESSION['flag'])) $_SESSION['flag'] = 1;
 			if(isset($_GET[historique])) 
 			{	
 				$_SESSION['referer'] .= '&historique';
+				$_SESSION['get_params'] = $_GET;
+
 				header('location:action.php?list_stock=' . $_GET['list_stock'] . '&historique');
 			}
 			else
 			{
 				$_SESSION['referer'] = 'index.php?list_stock=' . $_GET['list_stock'] . '&mag=' . $_GET['mag'];
+				$_SESSION['get_params'] = $_GET;
 				header('location:action.php?list_stock=' . $_GET['list_stock']);
 			}
 				
@@ -30,36 +33,46 @@ if(!isset($_SESSION['flag'])) $_SESSION['flag'] = 1;
 		else
 		{
 	?>
-		<h1>Fiche du stock de <?php echo $_GET['mag']; ?></h1>
+		<h2>Fiche du stock de <?php echo $_GET['mag'] . '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp' . $_SESSION['Mag'][0][5] . '</h2>'; 
+		echo "<form id='list_stock_form' action='action.php?trans_stock=" . $_GET['list_stock'] . "&mag=" . $_GET['mag'] . "' method='post'>";
+		?>
 		<table id="table-list">
 		<tr>
-		<?php if(isset($_GET['historique'])) { ?>
-		<td><h1>action</h1></td>	
-		<td><h1>fournisseur</h1></td>	
+		<?php  if(isset($_GET['historique'])) { ?>
+		<td><h2>action</h2></td>
+		<td><h2>Code</h2></td>	
+		<td><h2>fournisseur</h2></td>	
+		<input type="" name="" placeholder="">
+		<td><h2>Date</h2></td>
 		<?php }else {?>
-		<td><h1>Nom</h1></td>
+		<td><h2>Code</h2></td>
+		<td><h2>Désignation</h2></td>
+		<td><h2>Famille</h2></td>
+		<td><h2>Sous Famille</h2></td>
 		<?php } ?>	
-		<td><h1>Code</h1></td>
-		<td><h1>Date</h1></td>
-		<td><h1>Quantité</h1></td>
-		<td><h1>Prix <?php if(!isset($_GET['historique'])) echo ' moy'; echo '</h1></td>';
+		<td><h2>Quantité</h2></td>
+		<td><h2>Prix 
+		<?php if(!isset($_GET['historique'])) echo ' moy'; echo '</h2></td><td><h2>Prix totale</h2></td>';
 		if(!isset($_GET['historique']))
 		{
 		?>
-		<td><a href="index.php?in_stock=<?php echo $_GET['list_stock']. '&mag=' . $_GET['mag']; ?>"><button>Acheter</button><a href="index.php?list_stock=<?php echo $_GET['list_stock'] . '&mag=' . $_GET['mag']; ?>&historique"><button>Historique</button></td>
+		<td><a href="index.php?in_stock=<?php echo $_GET['list_stock']. '&mag=' . $_GET['mag']; ?>" ><button type="button">Acheter</button><a href="index.php?list_stock=<?php echo $_GET['list_stock'] . '&mag=' . $_GET['mag']; ?>&historique"><button type="button">Historique</button></a><hr style="border-style: inset;border-width: 2px;width: 100%;padding: 0;" > <h2>Unitées à vendre</h2></td>
 		<?php } ?>
 		</tr>
 		<?php
 			if(!isset($_GET['historique']))
 			{
-				echo "<form id='inline-form' action='action.php?out_stock=" . $_GET['list_stock'] . "&mag=" . $_GET['mag'] . "' method='post'>";
 				foreach ($_SESSION['stock'] as $raw) {
 					if($raw[0] != '')
-						echo "<tr> <td><h1>$raw[6]</h1></td> <td><h1>$raw[7]</h1></td>	<td><h1>$raw[3]</h1></td> <td><h1>$raw[4]</h1></td> <td><h1>$raw[5]</h1></td> <td style='width:150px;'> <label id='lab_inline'>Vendre</label>
-					<input type='number' name='qte_$raw[7]' value = '0' id='vendre_inp' required> unitées <input type='hidden' name='id_art_$raw[7]' value='$raw[2]'></td>";
+						echo "<tr> <td><h2>$raw[2]</h2></td> <td><h2>$raw[7]</h2></td>	<td><h2>$raw[8]</h2></td> <td><h2>$raw[9]</h2></td> <td><h2>$raw[4]</h2></td> <td><h2>$raw[5]</h2></td> <td><h2>$raw[6]</h2></td> <td style='width:150px;'> 
+							<input type='number' name='qte_$raw[7]' value = '0' id='vendre_inp' required> <input type='hidden' name='id_art_$raw[7]' value='$raw[2]'></td>";
 				}
-				echo "</table>
-				<input type='submit' value='vendre'>
+				echo "</table>";
+				if($_GET['list_stock'] != 1)
+					echo "<input  type='submit' name='entrer' value='entrer(affaire -> magasin centrale)' ><br>";
+				echo "<input id='sortie_btn'  type='submit' name='transfert' value='sortie(cet affaire->affaire)' onclick='return check_val(this)'><br><br>
+				<input type='text' name='mag_dest' placeholder='Magasin destination'><br>
+				<label id='imprim'><p>imprimer ?</p><input type='checkbox' name='imp'/></label>
 				</form>";
 			}
 			else
@@ -67,21 +80,22 @@ if(!isset($_SESSION['flag'])) $_SESSION['flag'] = 1;
 				foreach ($_SESSION['stock'] as $raw) {
 					if($raw[0] != '')
 					{
+						echo '<tr>';
 						if($raw['cod_four'] != 'x')
 						{
-							echo '<tr> <td><h1> achat </h1></td><td><h1>';
+							echo '<td><h2> achat </h2></td><td><h2>' . $raw['Cod_art'] . '</h2></td><td><h2>';
 							foreach ($_SESSION['four'] as $four) {
 								if($raw['cod_four'] == $four['Cod_four'])
 								{
-									echo $four['Nom'] . " " . $four['Prenom'] . '</h1></td>';
+									echo $four['Nom'] . " " . $four['Prenom'] . '</h2></td>';
 									break;
 								}
 							}
 						}
 						else	
-							echo '<tr> <td><h1> vente </h1></td><td>X</td>';
+							echo '<td><h2> vente </h2></td><td><h2>' . $raw['Cod_art'] . '</h2></td><td>X</td>';
 
-						echo '<td><h1>' . $raw['Cod_art'] . '</h1></td> <td><h1>' . $raw['date_e'] .'</h1></td>	<td><h1>' . $raw['qte'] . ' </h1></td> <td><h1>' . $raw['pu'] . '</tr>';
+						echo ' <td><h2>' . $raw['date_e'] .'</h2></td>	<td><h2>' . $raw['qte'] . ' </h2></td> <td><h2>' . $raw['pu'] . '<td><h2>' . $raw['pt'] . '</tr>';
 					}
 				}
 				echo "</table>";

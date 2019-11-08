@@ -23,7 +23,7 @@ if(!isset($_SESSION['flag'])) $_SESSION['flag'] = 1;
 
 					foreach ($_SESSION['art'] as $art) {
 						if($art[0] != '')
-							echo "<option value='$art[0]'>$art[2]</option>";
+							echo "<option value='$art[0]'>$art[1]</option>";
 					}
 				}
 			?>

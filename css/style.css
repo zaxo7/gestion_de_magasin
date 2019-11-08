@@ -152,14 +152,21 @@ button:hover , input[type=submit]:hover
   color: #3d3d3d;
   background-color: white;
 }
-button
+
+#sortie_btn
 {
+  padding-bottom: 21px;
 }
 
-#inline-form
+#sortie_btn:hover
 {
-  display: flex;
-  flex-flow: row wrap;
+  color: #3d3d3d;
+  background-color: white;
+}
+
+
+#list_stock_form
+{
   align-items: center;
 }
 .frm
@@ -179,10 +186,12 @@ h3
 {
   margin-right: -3%;
 }
-label , input
+
+label, input
 {
   display: block;
 }
+
 
 label
 {
@@ -190,3 +199,15 @@ label
   color: black;
 }
 
+
+#inp_mag_dest
+{
+  margin-left:3%;
+}
+
+
+#imprim p
+{
+  margin-top: 0px;
+  margin-bottom: 0px;
+}

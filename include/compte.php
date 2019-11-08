@@ -40,19 +40,19 @@
 	<table id="table-list" align="center">
 	<tr>
 		<td>
-			<h1>psuedo</h1>
+			<h2>psuedo</h2>
 		</td>
 		<td>
-			<h1>nom</h1>
+			<h2>nom</h2>
 		</td>
 		<td>
-			<h1>prenom</h1>
+			<h2>prenom</h2>
 		</td>
 		<td>
-			<h1>poste</h1>
+			<h2>poste</h2>
 		</td>
 		<td>
-			<h1>email</h1>
+			<h2>email</h2>
 		</td>
 		<td>
 			

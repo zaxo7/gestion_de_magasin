@@ -4,9 +4,9 @@ if(!isset($_SESSION['flag'])) $_SESSION['flag'] = 1; ?>
 <div>
 	<table id="table-list" align="center">
 		<tr>
-			<td><h1>Nom</h1></td>	
-			<td><h1>Prenom</h1></td>
-			<td><h1>Adresse</h1></td>
+			<td><h2>Nom</h2></td>	
+			<td><h2>Prenom</h2></td>
+			<td><h2>Adresse</h2></td>
 			<td><a href="index.php?add_four"><button>Ajouter un Fournisseur</button></a>
 		</tr>
 			<?php 
@@ -27,7 +27,7 @@ if(!isset($_SESSION['flag'])) $_SESSION['flag'] = 1; ?>
 				{
 					foreach ($_SESSION['four'] as $raw) {
 						if($raw[0] != '')
-							echo "<tr> <td><h1>$raw[1]</h1></td> <td><h1>$raw[2]</h1></td>  <td> <h1>$raw[3]</h1></td> <td> <a href='action.php?del_four=$raw[0]'><button onclick='return confirm(\"Êtes-vous sûr ?\")'>supprimer</button></a></td></tr>";
+							echo "<tr> <td><h2>$raw[1]</h2></td> <td><h2>$raw[2]</h2></td>  <td> <h2>$raw[3]</h2></td> <td> <a href='action.php?del_four=$raw[0]'><button onclick='return confirm(\"Êtes-vous sûr ?\")'>supprimer</button></a></td></tr>";
 					}
 					//initialiser pour la prochaine fois
 					$_SESSION['flag'] = 1;

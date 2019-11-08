@@ -18,8 +18,8 @@ session_start();
 			<nav class="main-nav" role="navigation">
 				<div class="containertop">
 								<ul>
-									<li><a href="index.php?list_mag">Magazains</a></li>
-									<li><a href="index.php?compte">Compte</a></li>
+									<!-- <li><a href="index.php?list_mag">Magazains</a></li> -->
+									<li style="padding-left: 10%;"><a href="index.php?compte">Compte</a></li>
 									<li><a href="action.php?logout">Déconnection</a></li>
 									<li style="padding-left: 45%;"><a>zaxo7</a></li>
 								</ul>			
@@ -28,6 +28,12 @@ session_start();
 			<div class="containerbottom">
 				<br>
 			<center>
+				<a href="index.php?list_mag"><button>Affaires</button></a>
+				<a href='index.php?list_four'><button>fournisseurs</button></a>
+				<a href='index.php?list_art'><button>articles</button></a>
+				<a href='index.php?list_FSF'><button>familles</button></a>
+				<br>
+				<br>
 				<?php
 				// tester la présense de parametre get
 				if (isset($_GET['list_mag']))
@@ -66,10 +72,6 @@ session_start();
 				{
 					include('include/list_four.php');
 				}
-				else if(isset($_GET['list_chef']))
-				{
-					include('include/list_chef.php');
-				}
 				else if(isset($_GET['in_stock']))
 				{
 					include('include/in_stock.php');
@@ -77,10 +79,6 @@ session_start();
 				else if(isset($_GET['list_stock']))
 				{
 					include('include/list_stock.php');
-				}
-				else if(isset($_GET['add_chef']))
-				{
-					include('include/add_chef.php');
 				}
 				else if(isset($_GET['compte']))
 				{

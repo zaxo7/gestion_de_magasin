@@ -43,3 +43,33 @@ function conf()
     b = 0;
   }
 }
+
+function check_val(elm)
+{
+  if(elm.nextSibling.nextSibling.nextSibling.nextSibling.value.length == 0)
+  {
+    alert("Donner un magasin destination");
+    return false;
+  }
+  else
+  {
+    return true;
+  }
+}
+/*function add_input_mag(elm)
+{
+  var inp = document.createElement("input");
+  inp.id = "inp_mag_dest";
+  inp.type = "text";
+  inp.name = "mag_dest";
+  inp.placeholder = "Magasin destination";
+  elm.parentNode.insertBefore(inp,elm.nextSibling.nextSibling.nextSibling);
+}
+function del_input_mag()
+{
+  var inp = document.querySelector("#inp_mag_dest");
+  if(inp)
+  {
+    inp.parentNode.removeChild(inp);
+  }
+}*/

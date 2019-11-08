@@ -6,7 +6,7 @@
 	<table id="table-list" align="center">
 		<tr>
 			<td>COD</td>
-			<td>Nom</td>
+			<td>Désignation</td>
 			<td>Famille</td>
 			<td>Sous Famille</td>
 			<td><a href='index.php?add_art'><button>ajouter</button></a></td>

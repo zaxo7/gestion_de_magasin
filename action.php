@@ -8,11 +8,26 @@
 	if(isset($_GET['add_mag']))
 	{
 		
-		$ans = $bdd->prepare("INSERT INTO Mag (affaire,lieu,chefprojet,date_cr) VALUES (?,?,?,NOW())");
-		if($ans->execute(array($_POST['aff'], $_POST['lieu'], $_POST['chef'])))
-			header('location:index.php?list_mag');
+		$ans = $bdd->prepare("INSERT INTO chef_proj (Nom,prenom) VALUES (?,?)");
+		if($ans->execute(array($_POST['Nom'], $_POST['Prenom'])))
+		{
+			$ans = $bdd->prepare('SELECT cod_chef FROM chef_proj where Nom = ? AND Prenom = ?');
+			$ans->execute(array($_POST['Nom'], $_POST['Prenom']));
+			//extraire une ligne
+			$i = $ans->fetch();
+
+			$ans = $bdd->prepare("INSERT INTO Mag (affaire,lieu,chefprojet,date_cr) VALUES (?,?,?,NOW())");
+			
+			if($ans->execute(array($_POST['aff'], $_POST['lieu'], $i[0])))
+				header('location:index.php?list_mag&ok');
+			else
+				header('location:index.php?list_mag&error=0');
+		
+		}
 		else
-			header('location:index.php?list_mag&error');
+			header('location:index.php?list_mag&error=1');
+		
+		
 	}
 	//ajouter une famille
 	else if(isset($_GET['add_F']))
@@ -96,16 +111,6 @@
 			header('location:index.php?add_four&error');
 
 	}
-	//ajouter un chef de projet
-	else if(isset($_GET['add_chef']))
-	{
-		$ans = $bdd->prepare('INSERT INTO chef_proj (nom,prenom) VALUES (?,?)');
-		if($ans->execute(array($_POST['nom'],$_POST['prenom'])))
-			header('location:index.php?add_chef&ok');
-		else
-			header('location:index.php?add_chef&error');
-
-	}
 	//acheter 
 	else if(isset($_GET['in_stock']))
 	{
@@ -120,9 +125,17 @@
 	//supprimer un magasin
 	else if(isset($_GET['del_mag']))
 	{
+		$ans = $bdd->prepare("SELECT chefprojet FROM Mag WHERE Cod_mag = ?");
+		$ans->execute(array($_GET['del_mag']));
+		$cod_chef = $ans->fetch();
+		echo $cod_chef[0];
+		$ans = $bdd->prepare("DELETE FROM chef_proj WHERE cod_chef = ?");
+		$ans->execute(array($cod_chef[0]));
+
 		$ans = $bdd->prepare("DELETE FROM mag WHERE cod_mag = ?");
+
 		if($ans->execute(array($_GET['del_mag'])))
-			header('location:index.php?list_mag&ok');
+			header('location:index.php?list_mag$ok');
 		else
 			header('location:index.php?list_mag$error');
 	}
@@ -134,15 +147,6 @@
 			header('location:index.php?list_four&ok');
 		else
 			header('location:index.php?list_four&error');
-	}
-	//supprimer un chef de projet
-	else if(isset($_GET['del_chef']))
-	{
-		$ans = $bdd->prepare("DELETE FROM chef_proj WHERE cod_chef = ?");
-		if($ans->execute(array($_GET['del_chef'])))
-			header('location:index.php?list_chef&ok');
-		else
-			header('location:index.php?list_chef&error');
 	}
 	//supprimer un article
 	else if(isset($_GET['del_art']))
@@ -181,25 +185,67 @@
 			header("location:index.php?compte&userm=" . $_GET['userm'] . "&error");
 	}
 	//vendre
-	else if(isset($_GET['out_stock']))
+	else if(isset($_GET['trans_stock']))
 	{
+		print_r($_POST);
 		$i = 0;
 		$size = sizeof($_POST);
+		$imprimer;
+		//imprimer
+		if(($size % 2))
+		{
+			$imprimer = true;
+			$size--;
+		}
+		//ne pas imprimer
+		else
+		{
+			$imprimer = false;
+		}
+
+		//copy data from post to $data
+		$i = 0;
 		$data = array();
 		foreach ($_POST as $key => $value) {
 			$data[$i] = $value;
 			$i++;
 		}
-		$i = 0;
-		while($i < $size)
-		{
-			$ans = $bdd->prepare("call out_stock(?,?,?)");
-			if(!$ans->execute(array($_GET['out_stock'],$data[$i+1],$data[$i])))
-				header('location:index.php?list_stock=' . $_GET['out_stock'] . '&mag=' . $_GET['mag'] . '&error');
 
-			$i = $i + 2;
+		//verifier si vs le magasin centrale ou vs un autre par default vs au magasin centrale
+		$Cod_mag_dest = 1;
+		if($data[$size-1] != "")
+		{
+			//verifier si le magasin destination existe
+			$ans = $bdd->prepare("SELECT DISTINCT Cod_mag FROM mag WHERE affaire = ?");
+
+			$ans->execute(array($data[$size-1]));
+
+			($Cod_mag_dest = $ans->fetch()[0]);
+
+			if($Cod_mag_dest == "")
+			{
+				header('location:index...php?list_stock=' . $_GET['trans_stock'] . '&mag=' . $_GET['mag'] . '&error=affaire n existe pas');
+			}
 		}
-		header('location:index.php?list_stock=' . $_GET['out_stock'] . '&mag=' . $_GET['mag'] . '&ok');
+		$i = 0;
+		while($i < $size-2)
+		{
+			$ans = $bdd->prepare("call out_stock(?,?,?,?)");
+			if($data[$i] != 0)
+			{
+
+			if(!$ans->execute(array($_GET['trans_stock'],$data[$i+1],$data[$i],$Cod_mag_dest)))
+				{
+					break;
+					echo "error";
+				}
+				header('location:index.php?list_stock=' . $_GET['trans_stock'] . '&mag=' . $_GET['mag'] . '&error');
+
+			}
+			$i = $i + 2;
+			echo "ok";
+		}
+		header('location:index.php?list_stock=' . $_GET['trans_stock'] . '&mag=' . $_GET['mag'] . '&ok');
 	}
 
 	//listing
@@ -209,7 +255,13 @@
 		$ans = $bdd->query('SELECT * FROM Mag INNER JOIN chef_proj ON Mag.chefprojet = chef_proj.cod_chef');
 		$i = 0;
 		//charger le résultat dans la variable globale
-		while($_SESSION['Mag'][$i++] = $ans->fetch());
+		if(($_SESSION['Mag'][$i++] = $ans->fetch())[0] == '')
+		{
+			$ans = $bdd->query("INSERT INTO chef_proj (Cod_chef,Nom,prenom) VALUES (1,'Donald','Trump')");
+			$ans = $bdd->query("INSERT INTO Mag (Cod_mag,affaire,lieu,chefprojet,date_cr) VALUES (1,'METALENG<br>(Magasin centrale)','HUSEIN DEY',1,NOW())");
+		}
+		else
+			while($_SESSION['Mag'][$i++] = $ans->fetch());
 
 
 		header('location:index.php?list_mag');
@@ -254,15 +306,6 @@
 
 		header('location:' . $_SESSION['referer']);
 	}
-	//lister les chefs du projet
-	else if(isset($_GET['list_chef']))
-	{
-		$ans = $bdd->query('SELECT cod_chef,nom,prenom FROM chef_proj');
-		$i = 0;
-		while($_SESSION['chef'][$i++] = $ans->fetch());
-
-		header('location:' . $_SESSION['referer']);
-	}
 	//lister les fourniseurs et les articles
 	else if(isset($_GET['list_art_four']))
 	{
@@ -270,7 +313,7 @@
 		$i = 0;
 		while($_SESSION['four'][$i++] = $ans->fetch());
 
-		$ans = $bdd->query('select article.Cod_art,article.cod_art,article.nom,sf.nom_sf,f.nom_f From article INNER JOIN SF ON SF.Cod_SF =  article.Cod_sf INNER JOIN F ON F.Cod_F = SF.Cod_F');
+		$ans = $bdd->query('select article.cod_art,article.Desig_art,sf.Desig_sf,f.Desig_f From article INNER JOIN SF ON SF.Cod_SF =  article.Cod_sf INNER JOIN F ON F.Cod_F = SF.Cod_F');
 		$i = 0;
 		while($_SESSION['art'][$i++] = $ans->fetch());
 
@@ -279,11 +322,11 @@
 	//lister le stock
 	else if(isset($_GET['list_stock']))
 	{
-		if(!isset($_GET['historique']))
-			$ans = $bdd->prepare(' SELECT mag.lien,fiche_stock.cod_mag,fiche_stock.Cod_art,fiche_stock.date_e,fiche_stock.qte,fiche_stock.pu,article.nom,article.cod_art FROM fiche_stock INNER JOIN mag ON fiche_stock.cod_mag = mag.cod_mag INNER JOIN article ON fiche_stock._art = article._art WHERE fiche_stock.cod_mag = ?');
+		if( !isset($_GET['historique']) )
+			$ans = $bdd->prepare(' SELECT mag.date_cr, fiche_stock.cod_mag, fiche_stock.Cod_art, fiche_stock.date_e, fiche_stock.qte, fiche_stock.pu, fiche_stock.pt, article.Desig_art, F.Desig_F, SF.Desig_SF FROM fiche_stock INNER JOIN mag ON fiche_stock.cod_mag = mag.cod_mag INNER JOIN article ON fiche_stock.Cod_art = article.Cod_art INNER JOIN chef_proj ON chef_proj.cod_chef = mag.chefprojet INNER JOIN SF ON article.Cod_Sf = SF.Cod_SF INNER JOIN F ON SF.COD_F = F.Cod_F WHERE fiche_stock.cod_mag = ?');
 		else
 		{
-			$ans = $bdd->prepare('select * from (SELECT cod_mag,Cod_art,cod_four,date_e,qte,pu FROM entrer UNION SELECT cod_mag,Cod_art,"x",date_s,qte,pu FROM sortie) AS es JOIN article ON article.Cod_art = es.Cod_art WHERE es.cod_mag = ? ORDER BY es.date_e DESC');
+			$ans = $bdd->prepare('select * from (SELECT cod_mag,Cod_art,cod_four,date_e,qte,pu,pt FROM entrer UNION SELECT cod_mag,Cod_art,"x",date_s,qte,pu,pt FROM sortie) AS es JOIN article ON article.Cod_art = es.Cod_art WHERE es.cod_mag = ? ORDER BY es.date_e DESC');
 			
 			$ans2 = $bdd->query('select * from fourniseur');
 			$i = 0;
@@ -293,7 +336,6 @@
 
 		$i = 0;
 		while($_SESSION['stock'][$i++] = $ans->fetch());
-
 		header('location:' . $_SESSION['referer']);
 
 	}

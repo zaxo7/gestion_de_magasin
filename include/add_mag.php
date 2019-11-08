@@ -4,33 +4,11 @@ if(!isset($_SESSION['flag'])) $_SESSION['flag'] = 1;?>
 	<form action="action.php?add_mag" method="post">
 		<label>Affaire<input type="text" name="aff"></label>
 		<label>lieu<input type="text" name="lieu"></label>
-		<label>chef<select name="chef">
-			<?php 
+		<br>
+		<b>Chef Du Projet</b>
+		<label>Nom<input type="text" name="Nom"></label>
+		<label>Prenom<input type="text" name="Prenom"></label>
 
-				if($_SESSION['flag'])
-				{
-					$_SESSION['flag'] = 0;
-
-					$_SESSION['referer'] = 'index.php?add_mag';
-					//redirection
-					header('location:action.php?list_chef');
-				}
-				else
-				{
-					//restorer la valeur
-					$_SESSION['flag'] = 1;
-					//parcour les lignes de familles
-					foreach ($_SESSION['chef'] as $chef_row) 
-					{
-						if($chef_row[0] != '')	
-						{
-							echo "<option value='$chef_row[0]'";
-							echo ">$chef_row[1] $chef_row[2]</option>";
-						}
-					}
-				}
-			?>
-		</select></label>
 		<input type="submit" value="ajouter">
 	</form>
 	<br><br>
