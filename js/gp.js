@@ -48,6 +48,8 @@ function check_val(elm)
 {
   if(elm.nextSibling.nextSibling.nextSibling.nextSibling.value.length == 0)
   {
+    var btn = document.querySelector("#entrer_btn");
+    btn.type = "hidden";
     alert("Donner un magasin destination");
     return false;
   }
@@ -56,6 +58,25 @@ function check_val(elm)
     return true;
   }
 }
+function hide_entrer(inp)
+{
+  var btn = document.querySelector("#entrer_btn");
+  if(inp.value != "")
+  {
+    btn.type = "hidden";
+  }
+  else
+  {
+    btn.type = "submit";
+  }
+}
+function hide_trans()
+{
+  var btn = document.querySelector("#transfert_btn");
+  btn.type = "hidden";
+  return true;
+}
+
 /*function add_input_mag(elm)
 {
   var inp = document.createElement("input");

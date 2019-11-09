@@ -56,7 +56,7 @@ if(!isset($_SESSION['flag'])) $_SESSION['flag'] = 1;
 		if(!isset($_GET['historique']))
 		{
 		?>
-		<td><a href="index.php?in_stock=<?php echo $_GET['list_stock']. '&mag=' . $_GET['mag']; ?>" ><button type="button">Acheter</button><a href="index.php?list_stock=<?php echo $_GET['list_stock'] . '&mag=' . $_GET['mag']; ?>&historique"><button type="button">Historique</button></a><hr style="border-style: inset;border-width: 2px;width: 100%;padding: 0;" > <h2>Unitées à vendre</h2></td>
+		<td><a href="index.php?in_stock=<?php echo $_GET['list_stock']. '&mag=' . $_GET['mag']; ?>" ><button type="button" >Acheter</button><a href="index.php?list_stock=<?php echo $_GET['list_stock'] . '&mag=' . $_GET['mag']; ?>&historique"><button type="button">Historique</button></a><hr style="border-style: inset;border-width: 2px;width: 100%;padding: 0;" > <h2>Unitées à vendre</h2></td>
 		<?php } ?>
 		</tr>
 		<?php
@@ -69,9 +69,11 @@ if(!isset($_SESSION['flag'])) $_SESSION['flag'] = 1;
 				}
 				echo "</table>";
 				if($_GET['list_stock'] != 1)
-					echo "<input  type='submit' name='entrer' value='entrer(affaire -> magasin centrale)' ><br>";
-				echo "<input id='sortie_btn'  type='submit' name='transfert' value='sortie(cet affaire->affaire)' onclick='return check_val(this)'><br><br>
-				<input type='text' name='mag_dest' placeholder='Magasin destination'><br>
+				{
+					echo "<input id='entrer_btn' type='submit' name='entrer' value='entrer(affaire -> magasin centrale)' onclick='return hide_trans()' ><br>";
+				}
+				echo "<input id='transfert_btn'  type='submit' name='transfert' value='transfert(cet affaire->affaire)' onclick='return check_val(this)'><br><br>
+				<input type='text' name='mag_dest' placeholder='Magasin destination' oninput='hide_entrer(this)'><br>
 				<label id='imprim'><p>imprimer ?</p><input type='checkbox' name='imp'/></label>
 				</form>";
 			}

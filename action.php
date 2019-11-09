@@ -192,14 +192,16 @@
 		$size = sizeof($_POST);
 		$imprimer;
 		//imprimer
-		if(($size % 2))
+		if(!($size % 2))
 		{
+			//echo "<br>imprimer";
 			$imprimer = true;
 			$size--;
 		}
 		//ne pas imprimer
 		else
 		{
+			//echo "<br>ne pas imprimer";
 			$imprimer = false;
 		}
 
@@ -220,32 +222,98 @@
 
 			$ans->execute(array($data[$size-1]));
 
-			($Cod_mag_dest = $ans->fetch()[0]);
+			$Cod_mag_dest = $ans->fetch()[0];
 
 			if($Cod_mag_dest == "")
 			{
 				header('location:index...php?list_stock=' . $_GET['trans_stock'] . '&mag=' . $_GET['mag'] . '&error=affaire n existe pas');
 			}
 		}
+		/*echo "<br>cod_mag_dst:" . $Cod_mag_dest;
+		echo "<br>real size:" . sizeof($_POST);
+		echo "<br>size:" . $size;
+		echo "<br>imp:" . $imprimer;
+		echo "<br>data:" . $data[$size-1];*/
+
 		$i = 0;
-		while($i < $size-2)
+		$j = 0;
+		while($i < $size-3)
 		{
 			$ans = $bdd->prepare("call out_stock(?,?,?,?)");
 			if($data[$i] != 0)
 			{
-
-			if(!$ans->execute(array($_GET['trans_stock'],$data[$i+1],$data[$i],$Cod_mag_dest)))
+				if($data[$i] < 0)
+				{
+					$imprimer = false;
+					break;
+				}
+				
+				if(!$ans->execute(array($_GET['trans_stock'],$data[$i+1],$data[$i],$Cod_mag_dest)))
 				{
 					break;
 					echo "error";
+					header('location:index.php?list_stock=' . $_GET['trans_stock'] . '&mag=' . $_GET['mag'] . '&error');
 				}
-				header('location:index.php?list_stock=' . $_GET['trans_stock'] . '&mag=' . $_GET['mag'] . '&error');
 
+
+				$ans = $bdd->query("SELECT DISTINCT * FROM fiche_stock INNER JOIN article ON fiche_stock.Cod_art = article.cod_art WHERE fiche_stock.cod_art = '" . $data[$i+1] . "'");
+				$_SESSION['stock_out'][$j] = $ans->fetch();
+				$_SESSION['stock_out'][$j][3] = $data[$i];
+				//print_r($_SESSION['stock_out']);
+				//echo "<hr>";
 			}
 			$i = $i + 2;
+			$j++;
 			echo "ok";
 		}
-		header('location:index.php?list_stock=' . $_GET['trans_stock'] . '&mag=' . $_GET['mag'] . '&ok');
+
+		if($imprimer)
+		{
+				$ans = $bdd->query("SELECT DISTINCT * FROM mag WHERE cod_mag = $Cod_mag_dest");
+				$_SESSION['mag_dst'] = $ans->fetch();
+
+				
+				$ans = $bdd->prepare("SELECT DISTINCT * FROM mag WHERE cod_mag = ?");
+				$ans->execute(array($_GET['trans_stock']));
+				$_SESSION['mag_src'] = $ans->fetch();
+
+				$chef_proj = $_SESSION['mag_dst'][4];
+
+				
+
+
+				$ans = $bdd->query("SELECT DISTINCT * FROM chef_proj WHERE cod_chef = $chef_proj");
+				$_SESSION['chef_dst'] = $ans->fetch();
+
+				$chef_proj = $_SESSION['mag_src'][4];
+
+				$ans = $bdd->query("SELECT DISTINCT * FROM chef_proj WHERE cod_chef = $chef_proj");
+				$_SESSION['chef_src'] = $ans->fetch();
+
+				//print_r($_SESSION['stock_out']);
+			// BSMP
+			if($Cod_mag_dest == 1)
+			{
+
+				//echo "okk"; 
+				header('location:include/exeledit_s.php');
+			}
+			// BTMP
+			else
+			{
+				header('location:include/exeledit_t.php');
+			}
+	
+		}
+		else
+		{
+			header('location:index.php?list_stock=' . $_GET['trans_stock'] . '&mag=' . $_GET['mag'] . '&ok');
+		}
+
+
+
+
+
 	}
 
 	//listing
@@ -253,15 +321,19 @@
 	else if(isset($_GET['list_mag']))
 	{
 		$ans = $bdd->query('SELECT * FROM Mag INNER JOIN chef_proj ON Mag.chefprojet = chef_proj.cod_chef');
+		$ans2 = $bdd->query('SELECT DISTINCT Cod_mag FROM Mag INNER JOIN chef_proj ON Mag.chefprojet = chef_proj.cod_chef WHERE cod_mag = 1');
 		$i = 0;
 		//charger le résultat dans la variable globale
-		if(($_SESSION['Mag'][$i++] = $ans->fetch())[0] == '')
+		if($ans2->fetch()[0] == '')
 		{
 			$ans = $bdd->query("INSERT INTO chef_proj (Cod_chef,Nom,prenom) VALUES (1,'Donald','Trump')");
-			$ans = $bdd->query("INSERT INTO Mag (Cod_mag,affaire,lieu,chefprojet,date_cr) VALUES (1,'METALENG<br>(Magasin centrale)','HUSEIN DEY',1,NOW())");
+			$ans = $bdd->query("INSERT INTO Mag (Cod_mag,affaire,lieu,chefprojet,date_cr) VALUES (1,'METALENG','HUSEIN DEY',1,NOW())");
+			$_SESSION['flag'] = 1;
 		}
 		else
+		{
 			while($_SESSION['Mag'][$i++] = $ans->fetch());
+		}
 
 
 		header('location:index.php?list_mag');
