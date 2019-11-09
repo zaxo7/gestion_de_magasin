@@ -57,6 +57,7 @@ if(!isset($_SESSION['flag'])) $_SESSION['flag'] = 1;
 						echo "</select></label>";
 					}
 				}
+				unset($_SESSION['F']);
 			?>
 			<br>
 			<input type="submit" value="ajouter">

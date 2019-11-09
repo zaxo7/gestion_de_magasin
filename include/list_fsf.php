@@ -12,6 +12,10 @@ if(!isset($_SESSION['flag'])) $_SESSION['flag']=1;
 			{
 				$_SESSION['flag'] = 0;
 				$_SESSION['referer'] = 'index.php?list_FSF';
+				
+				$_SESSION['get_params'] = $_GET;
+
+
 				header('location:action.php?list_FSF');
 			}
 			else

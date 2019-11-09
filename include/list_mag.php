@@ -29,7 +29,11 @@
 				//pour ne pas rentre la prochaine fois
 				$_SESSION['flag'] = 0;
 				//get_params pour conserver les paramétres get
+				/*foreach ($_GET as $key => $value) {
+					$_SESSION['get_params'][$key] = $value;
+				}*/
 				$_SESSION['get_params'] = $_GET;
+
 
 				unset($_SESSION['Mag']);
 

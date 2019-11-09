@@ -226,7 +226,7 @@
 
 			if($Cod_mag_dest == "")
 			{
-				header('location:index...php?list_stock=' . $_GET['trans_stock'] . '&mag=' . $_GET['mag'] . '&error=affaire n existe pas');
+				header('location:index.php?list_stock=' . $_GET['trans_stock'] . '&mag=' . $_GET['mag'] . '&error=affaire n existe pas');
 			}
 		}
 		/*echo "<br>cod_mag_dst:" . $Cod_mag_dest;
@@ -335,7 +335,7 @@
 			while($_SESSION['Mag'][$i++] = $ans->fetch());
 		}
 
-
+		//print_r($_SESSION['getparams']);
 		header('location:index.php?list_mag');
 	}
 

@@ -1,13 +1,14 @@
 <?php 
+print_r($_SESSION['get_params']);
 if(isset($_GET['ok']) || isset($_SESSION['get_params']['ok']))
 {
 	echo '<script>alert("succes")</script>';
-	unset($_SESSION['get_params']);
+	// unset($_SESSION['get_params']);
 }
 else if(isset($_GET['exists']) || isset($_SESSION['get_params']['exists']))
 {
 	echo '<script>alert("le code existe déja")</script>';
-	unset($_SESSION['get_params']);
+	// unset($_SESSION['get_params']);
 }
 else if(isset($_GET['error']) || isset($_SESSION['get_params']['error']))
 {
@@ -17,7 +18,7 @@ else if(isset($_GET['error']) || isset($_SESSION['get_params']['error']))
 	else
 		echo $_SESSION['get_params']['error'] . '")</script>';
 
-	unset($_SESSION['get_params']);
+	//unset($_SESSION['get_params']);
 }
 
 ?>
