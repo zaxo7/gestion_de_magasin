@@ -61,13 +61,16 @@ function check_val(elm)
 function hide_entrer(inp)
 {
   var btn = document.querySelector("#entrer_btn");
-  if(inp.value != "")
+  if(btn != null)
   {
-    btn.type = "hidden";
-  }
-  else
-  {
-    btn.type = "submit";
+    if((inp.value != "") && (inp.selectedIndex != 0) )
+    {
+      btn.type = "hidden";
+    }
+    else
+    {
+      btn.type = "submit";
+    }
   }
 }
 function hide_trans()
@@ -75,6 +78,32 @@ function hide_trans()
   var btn = document.querySelector("#transfert_btn");
   btn.type = "hidden";
   return true;
+}
+
+function recherche(inp)
+{
+  var url = window.location.href.toString();
+  url =  url.slice(0, url.lastIndexOf('/'));
+  url = url.concat("/action.php?recherche");
+  
+
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", url, false);
+  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+  xhr.send("str=" + inp.value);
+  var response =  xhr.response.toString();
+  response = response.split(':');
+  
+  var option = document.createElement("option");
+  var select = document.querySelector("#select_art");
+  select.innerHTML = "";
+
+  for (var i = 0; i <= response.length - 2; i += 2) {
+    option.value = response[i];
+    option.innerHTML = response[i+1];
+    select.appendChild(option);
+    option = document.createElement("option");
+  }
 }
 
 /*function add_input_mag(elm)

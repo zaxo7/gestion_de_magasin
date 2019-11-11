@@ -33,6 +33,7 @@
 					$_SESSION['get_params'][$key] = $value;
 				}*/
 				$_SESSION['get_params'] = $_GET;
+				$_SESSION['referer'] = 'index.php?list_mag';
 
 
 				unset($_SESSION['Mag']);

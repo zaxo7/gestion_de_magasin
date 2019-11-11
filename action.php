@@ -188,22 +188,11 @@
 	else if(isset($_GET['trans_stock']))
 	{
 		print_r($_POST);
+		//goto x;
 		$i = 0;
 		$size = sizeof($_POST);
-		$imprimer;
-		//imprimer
-		if(!($size % 2))
-		{
-			//echo "<br>imprimer";
-			$imprimer = true;
-			$size--;
-		}
-		//ne pas imprimer
-		else
-		{
-			//echo "<br>ne pas imprimer";
-			$imprimer = false;
-		}
+		$ok = true;
+		$imprimer = false;
 
 		//copy data from post to $data
 		$i = 0;
@@ -215,6 +204,7 @@
 
 		//verifier si vs le magasin centrale ou vs un autre par default vs au magasin centrale
 		$Cod_mag_dest = 1;
+		$Cod_mag_src = $_GET['trans_stock'];
 		if($data[$size-1] != "")
 		{
 			//verifier si le magasin destination existe
@@ -227,6 +217,7 @@
 			if($Cod_mag_dest == "")
 			{
 				header('location:index.php?list_stock=' . $_GET['trans_stock'] . '&mag=' . $_GET['mag'] . '&error=affaire n existe pas');
+				$ok = false;
 			}
 		}
 		/*echo "<br>cod_mag_dst:" . $Cod_mag_dest;
@@ -237,7 +228,7 @@
 
 		$i = 0;
 		$j = 0;
-		while($i < $size-3)
+		while(($i < $size-3) && $ok)
 		{
 			$ans = $bdd->prepare("call out_stock(?,?,?,?)");
 			if($data[$i] != 0)
@@ -247,6 +238,11 @@
 					$imprimer = false;
 					break;
 				}
+				else
+				{
+					$imprimer = true;
+				}
+
 				
 				if(!$ans->execute(array($_GET['trans_stock'],$data[$i+1],$data[$i],$Cod_mag_dest)))
 				{
@@ -265,54 +261,52 @@
 			}
 			$i = $i + 2;
 			$j++;
-			echo "ok";
+			//echo "ok";
 		}
-
 		if($imprimer)
 		{
-				$ans = $bdd->query("SELECT DISTINCT * FROM mag WHERE cod_mag = $Cod_mag_dest");
-				$_SESSION['mag_dst'] = $ans->fetch();
 
-				
-				$ans = $bdd->prepare("SELECT DISTINCT * FROM mag WHERE cod_mag = ?");
-				$ans->execute(array($_GET['trans_stock']));
-				$_SESSION['mag_src'] = $ans->fetch();
+			$ans = $bdd->query("SELECT DISTINCT * FROM mag WHERE cod_mag = $Cod_mag_dest");
+			$_SESSION['mag_dst'] = $ans->fetch();
 
-				$chef_proj = $_SESSION['mag_dst'][4];
+			
+			$ans = $bdd->prepare("SELECT DISTINCT * FROM mag WHERE cod_mag = ?");
+			$ans->execute(array($_GET['trans_stock']));
+			$_SESSION['mag_src'] = $ans->fetch();
 
-				
+			$chef_proj = $_SESSION['mag_dst'][4];
+
+			
 
 
-				$ans = $bdd->query("SELECT DISTINCT * FROM chef_proj WHERE cod_chef = $chef_proj");
-				$_SESSION['chef_dst'] = $ans->fetch();
+			$ans = $bdd->query("SELECT DISTINCT * FROM chef_proj WHERE cod_chef = $chef_proj");
+			$_SESSION['chef_dst'] = $ans->fetch();
 
-				$chef_proj = $_SESSION['mag_src'][4];
+			$chef_proj = $_SESSION['mag_src'][4];
 
-				$ans = $bdd->query("SELECT DISTINCT * FROM chef_proj WHERE cod_chef = $chef_proj");
-				$_SESSION['chef_src'] = $ans->fetch();
+			$ans = $bdd->query("SELECT DISTINCT * FROM chef_proj WHERE cod_chef = $chef_proj");
+			$_SESSION['chef_src'] = $ans->fetch();
 
-				//print_r($_SESSION['stock_out']);
-			// BSMP
+			//print_r($_SESSION['stock_out']);
+			// BEMP
 			if($Cod_mag_dest == 1)
 			{
-
-				//echo "okk"; 
+				echo "BEMP";
+				//header('location:include/exeledit_e.php');
+			}
+			// BSMP
+			else if ($Cod_mag_src == 1) {
+				echo "BSMP";
 				header('location:include/exeledit_s.php');
 			}
 			// BTMP
 			else
 			{
+				echo "BTMP";
 				header('location:include/exeledit_t.php');
 			}
-	
+
 		}
-		else
-		{
-			header('location:index.php?list_stock=' . $_GET['trans_stock'] . '&mag=' . $_GET['mag'] . '&ok');
-		}
-
-
-
 
 
 	}
@@ -336,8 +330,7 @@
 			while($_SESSION['Mag'][$i++] = $ans->fetch());
 		}
 
-		//print_r($_SESSION['getparams']);
-		header('location:index.php?list_mag');
+		header('location:'. $_SESSION['referer']);
 	}
 
 	else if(isset($_GET['list_FSF']))
@@ -409,6 +402,13 @@
 
 		$i = 0;
 		while($_SESSION['stock'][$i++] = $ans->fetch());
+		
+
+
+		$ans = $bdd->query('SELECT * FROM Mag');
+		$i = 0;
+		while($_SESSION['Mag'][$i++] = $ans->fetch());
+
 		header('location:' . $_SESSION['referer']);
 
 	}
@@ -422,6 +422,22 @@
 		while($_SESSION['users'][$i++] = $ans->fetch());
 
 		header('location:' . $_SESSION['referer'] . $_GET['list_users']);
+	}
+	else if(isset($_GET['recherche']))
+	{
+		
+		$ans = $bdd->prepare(' SELECT * FROM article WHERE Cod_art LIKE(?) OR Desig_art LIKE(?)');
+		if($ans->execute(array($_POST['str'] . '%', '%' . $_POST['str'] . '%')))
+		{
+			while($tmp = $ans->fetch())
+			{
+				echo $tmp[0] . ':' . $tmp[2] . ':'; 
+			}
+		}
+		else
+		{
+			echo 'error';
+		}
 	}
 
 

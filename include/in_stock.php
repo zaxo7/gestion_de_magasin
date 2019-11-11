@@ -3,8 +3,9 @@ if(isset($_SESSION['logged']) && !$_SESSION['logged']) header('location:index.ph
 if(!isset($_SESSION['flag'])) $_SESSION['flag'] = 1; 
 ?>
 <div>
+	<input type="text" name="recherche" placeholder="Recherche" oninput="recherche(this)" autofocus>
 	<form action="action.php?in_stock=<?php echo $_GET['in_stock']; ?>" method="POST">
-		<p>article :<select name="art">
+		<p>article :<select id="select_art" name="art">
 			<?php 
 				//le flag c pour éviter la boucle infinie de redirection
 				//si le flag != 0 alors la les variables ne sont pas chargées encore

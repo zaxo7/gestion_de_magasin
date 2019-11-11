@@ -71,11 +71,21 @@ if(!isset($_SESSION['flag'])) $_SESSION['flag'] = 1;
 				if($_GET['list_stock'] != 1)
 				{
 					echo "<input id='entrer_btn' type='submit' name='entrer' value='entrer(affaire -> magasin centrale)' onclick='return hide_trans()' ><br>";
+					echo "<input id='transfert_btn'  type='submit' name='transfert' value='transfert(cet affaire->affaire)' onclick='return check_val(this)'><br><br>";
 				}
-				echo "<input id='transfert_btn'  type='submit' name='transfert' value='transfert(cet affaire->affaire)' onclick='return check_val(this)'><br><br>
-				<input type='text' name='mag_dest' placeholder='Magasin destination' oninput='hide_entrer(this)'><br>
-				<label id='imprim'><p>imprimer ?</p><input type='checkbox' name='imp'/></label>
-				</form>";
+				else
+				{
+					echo "<input type='hidden' name='entrer' value='entrer(affaire -> magasin centrale)' ><br>";
+					echo "<input id='sortie_btn'  type='submit' name='sortie' value='sortie(Magasin centrale->affaire)' onclick='return check_val(this)'><br><br>";
+				}
+				echo "<select name='mag_dest' onchange='hide_entrer(this);'>";
+				echo "<option value=''></option>";
+				foreach ($_SESSION['Mag'] as $mag) {
+					if($mag[0] != '' && $mag[0] != 1 && $mag[0] != $_GET['list_stock'])
+						echo "<option value='" . $mag[1] . "'>" . $mag[1] . "</option>";
+				}
+
+				echo "</select><br></form>";
 			}
 			else
 			{
@@ -105,6 +115,7 @@ if(!isset($_SESSION['flag'])) $_SESSION['flag'] = 1;
 
 			//supprimer les données chargée
 			unset($_SESSION['stock']);
+			unset($_SESSION['Mag']);
 			//initialiser pour la prochaine fois
 			$_SESSION['flag'] = 1;
 		}

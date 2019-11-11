@@ -25,10 +25,10 @@ $sheet->mergecells("F13:G13");
 
 
 //Inserer dans les cellules
-$sheet->setCellValue('A13', $_SESSION['mag_src'][0]);
-$sheet->setCellValue('C13', $_SESSION['mag_src'][1]);
-$sheet->setCellValue('F13', $_SESSION['mag_src'][2]);
-$sheet->setCellValue('H13', $_SESSION['chef_src'][1] . ' ' . $_SESSION['chef_src'][2]);
+$sheet->setCellValue('A13', $_SESSION['mag_dst'][0]);
+$sheet->setCellValue('C13', $_SESSION['mag_dst'][1]);
+$sheet->setCellValue('F13', $_SESSION['mag_dst'][2]);
+$sheet->setCellValue('H13', $_SESSION['chef_dst'][1] . ' ' . $_SESSION['chef_dst'][2]);
 
 
 $total_HT = 0;
@@ -76,5 +76,6 @@ if(copy('../data/tmp.xlsx','../data/BSMP/' . md5(time()) . '.xlsx'))
 {
 	header('location:../' . $_SESSION['referer']);
 }
+
 
 ?>
