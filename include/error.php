@@ -1,5 +1,5 @@
 <?php 
-print_r($_SESSION['get_params']);
+//print_r($_SESSION['get_params']);
 if(isset($_GET['ok']) || isset($_SESSION['get_params']['ok']))
 {
 	echo '<script>alert("succes")</script>';

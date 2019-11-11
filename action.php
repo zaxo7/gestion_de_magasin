@@ -259,7 +259,8 @@
 				$ans = $bdd->query("SELECT DISTINCT * FROM fiche_stock INNER JOIN article ON fiche_stock.Cod_art = article.cod_art WHERE fiche_stock.cod_art = '" . $data[$i+1] . "'");
 				$_SESSION['stock_out'][$j] = $ans->fetch();
 				$_SESSION['stock_out'][$j][3] = $data[$i];
-				//print_r($_SESSION['stock_out']);
+				$_SESSION['stock_out'][$j][5] = $data[$i] * $_SESSION['stock_out'][$j][4];
+				print_r($_SESSION['stock_out']);
 				//echo "<hr>";
 			}
 			$i = $i + 2;
