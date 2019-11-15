@@ -22,7 +22,7 @@ session_start();
 									<!-- <li><a href="index.php?list_mag">Magazains</a></li> -->
 									<li style="padding-left: 10%;"><a href="index.php?compte">Compte</a></li>
 									<li><a href="action.php?logout">Déconnection</a></li>
-									<li style="padding-left: 45%;"><a>zaxo7</a></li>
+									<li style="padding-left: 45%;"><a><?php echo $_SESSION['psuedo']; ?></a></li>
 								</ul>			
 				</div>
 			</nav>
@@ -194,9 +194,9 @@ session_start();
 		</div>
 		<?php 
 			}
+			include("include/error.php");
 			}
 			//ce fichier contient des alertes de status
-			include('include/error.php');
 		?>
 		<script type="text/javascript" src="js/gp.js"></script>
 	</body>

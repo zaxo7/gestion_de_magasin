@@ -20,6 +20,7 @@
 				$_SESSION['flag'] = 0;
 				//referer c'est pour conserver le parametres + fichier
 				$_SESSION['referer'] = 'index.php?list_art';
+				$_SESSION['get_params'] = $_GET;
 				header('location:action.php?list_art');
 			}
 			else
@@ -33,6 +34,8 @@
 				$_SESSION['flag'] = 1;
 				//supprimer les données chargée
 				unset($_SESSION['art']);
+
+				include('include/error.php');
 			}
 			?>
 	</table>

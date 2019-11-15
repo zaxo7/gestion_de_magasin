@@ -2,7 +2,7 @@
 if(!isset($_SESSION['flag'])) $_SESSION['flag'] = 1;?>
 <div id="add-mag-div">
 	<form action="action.php?add_mag" method="post">
-		<label>Affaire<input type="text" name="aff"></label>
+		<label>Affaire<input type="text" name="aff" autofocus></label>
 		<label>lieu<input type="text" name="lieu"></label>
 		<br>
 		<b>Chef Du Projet</b>

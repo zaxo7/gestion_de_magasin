@@ -34,10 +34,11 @@ CREATE TABLE F
 
 CREATE TABLE SF
 (
-	Cod_SF CHAR(2) PRIMARY KEY,
+	Cod_SF CHAR(2),
 	Desig_SF CHAR(15) NOT NULL,
 	Cod_F CHAR(1) NOT NULL,
-	FOREIGN KEY (cod_f) REFERENCES f (cod_f) ON DELETE CASCADE 
+	FOREIGN KEY (cod_f) REFERENCES f (cod_f) ON DELETE CASCADE,
+	PRIMARY KEY(Cod_SF,Cod_F)
 );
 
 CREATE TABLE Article
@@ -126,7 +127,6 @@ BEGIN
 END//
 DELIMITER ;
 
-DROP PROCEDURE out_stock;
 DELIMITER //
 CREATE PROCEDURE out_stock (IN p_cod_mag INT(3), IN p_cod_art CHAR(6), IN p_qte INT(4), IN p_cod_mag_dst INT(3))
 BEGIN
@@ -161,7 +161,6 @@ BEGIN
 
 			UPDATE Fiche_stock SET Qte = Qte + p_qte , pu = @pum_dst, pt = @ptm WHERE Cod_mag = p_cod_mag_dst AND Cod_art = p_cod_art;
 		ELSE
-			INSERT INTO test (a,b,c) VALUES (@pum_dst,@pum_src,@qte_dst);
 			INSERT INTO Fiche_stock (Cod_mag,Cod_art,Date_e,Qte,Pu,pt) VALUES (p_cod_mag_dst,p_cod_art,NOW(),p_qte,@pum_dst,(p_qte * @pum_dst));
 		END IF;
 	END IF;

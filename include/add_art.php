@@ -1,7 +1,7 @@
 <?php if(isset($_SESSION['logged']) && !$_SESSION['logged']) header('location:index.php'); ?>
 <div id="tab_list">
 	<form action="action.php?add_art" method="post">
-		<input type="text" name="nom" placeholder="Nom" required>
+		<input type="text" name="nom" placeholder="Nom" required autofocus>
 		<br>
 		<label>famille<select id="F" name="F" onchange="giveSelection(this.value)" onshow="init_select()">
 			<?php
@@ -17,10 +17,13 @@
 						echo ">$F_raw[1]</option>";
 					}
 				}
+
+				include("include/error.php");
 			}
 			//si non il charge les deux dans action.php
 			else
 			{
+				$_SESSION['get_params'] = $_GET;
 				$_SESSION['referer'] = 'index.php?add_art';
 				header('location:action.php?list_FSF');
 			}

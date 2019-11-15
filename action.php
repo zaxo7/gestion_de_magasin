@@ -14,11 +14,12 @@
 			$ans = $bdd->prepare('SELECT cod_chef FROM chef_proj where Nom = ? AND Prenom = ?');
 			$ans->execute(array($_POST['Nom'], $_POST['Prenom']));
 			//extraire une ligne
-			$i = $ans->fetch();
+			$i = 0;
+			while($tmp[$i++] = $ans->fetch());
 
 			$ans = $bdd->prepare("INSERT INTO Mag (affaire,lieu,chefprojet,date_cr) VALUES (?,?,?,NOW())");
 			
-			if($ans->execute(array($_POST['aff'], $_POST['lieu'], $i[0])))
+			if($ans->execute(array($_POST['aff'], $_POST['lieu'], $tmp[$i-2][0])))
 				header('location:index.php?list_mag&ok');
 			else
 				header('location:index.php?list_mag&error=0');
@@ -40,7 +41,10 @@
 		$i = $ans->fetch();
 		//si n y a pas de résultat = le code n'existe pas
 		if($i[0] != NULL)
-			header('location:index.php?add_F&exists');
+		{
+			$_SESSION['get_params'] = array("error" => "le code famille existe"); 
+			header('location:index.php?add_F');
+		}
 		//insertion
 		else
 		{
@@ -72,7 +76,7 @@
 			$i = $ans->fetch();
 			//si elle existe
 			if($i[0] != NULL)
-				header('location:index.php?add_SF&exists');
+				header('location:index.php?add_SF&error=exists');
 			//n'existe pas
 			else
 			{
@@ -106,9 +110,9 @@
 	{
 		$ans = $bdd->prepare('INSERT INTO fourniseur (nom,prenom,adresse) VALUES (?,?,?)');
 		if($ans->execute(array($_POST['nom'],$_POST['prenom'],$_POST['adresse'])))
-			header('location:index.php?add_four&ok');
+			header('location:index.php?list_four&ok');
 		else
-			header('location:index.php?add_four&error');
+			header('location:index.php?list_four&error');
 
 	}
 	//acheter 
@@ -127,17 +131,16 @@
 	{
 		$ans = $bdd->prepare("SELECT chefprojet FROM Mag WHERE Cod_mag = ?");
 		$ans->execute(array($_GET['del_mag']));
+		
 		$cod_chef = $ans->fetch();
-		echo $cod_chef[0];
+		
 		$ans = $bdd->prepare("DELETE FROM chef_proj WHERE cod_chef = ?");
-		$ans->execute(array($cod_chef[0]));
+		
 
-		$ans = $bdd->prepare("DELETE FROM mag WHERE cod_mag = ?");
-
-		if($ans->execute(array($_GET['del_mag'])))
-			header('location:index.php?list_mag$ok');
+		if($ans->execute(array($cod_chef[0])))
+			header('location:index.php?list_mag&ok');
 		else
-			header('location:index.php?list_mag$error');
+			header('location:index.php?list_mag&error');
 	}
 	//supprimer un fournisseur
 	else if(isset($_GET['del_four']))
@@ -169,8 +172,8 @@
 	//supprimer une sous famille
 	else if(isset($_GET['del_SF']))
 	{
-		$ans = $bdd->prepare('DELETE FROM SF WHERE Cod_SF = ?');
-		if($ans->execute(array($_GET['del_SF'])))
+		$ans = $bdd->prepare('DELETE FROM SF WHERE Cod_SF = ? AND Cod_F = ?');
+		if($ans->execute(array($_GET['del_SF'], $_GET['F'])))
 			header('location:index.php?list_FSF&ok');
 		else
 			header('location:index.php?list_FSF&error');
@@ -287,12 +290,16 @@
 			$ans = $bdd->query("SELECT DISTINCT * FROM chef_proj WHERE cod_chef = $chef_proj");
 			$_SESSION['chef_src'] = $ans->fetch();
 
+			/*$ans = $bdd->prepare("SELECT DISTINCT * FROM fourniseur WHERE cod_four = ?");
+
+			$ans->execute(array())*/
+
 			//print_r($_SESSION['stock_out']);
 			// BEMP
 			if($Cod_mag_dest == 1)
 			{
 				echo "BEMP";
-				//header('location:include/exeledit_e.php');
+				header('location:include/exeledit_r.php');
 			}
 			// BSMP
 			else if ($Cod_mag_src == 1) {
@@ -305,6 +312,11 @@
 				echo "BTMP";
 				header('location:include/exeledit_t.php');
 			}
+
+		}
+		else
+		{
+			header('location:index.php?list_stock=' . $_GET['trans_stock'] . '&mag=' . $_GET['mag'] . '&error=verifier la contité à vendre');
 
 		}
 
@@ -459,14 +471,25 @@
 		$ans->execute(array($_POST['psuedo']));
 
 		//si il existe retourne une erreur
-		if($ans->fetch() != '')
-			header('location:index.php?register&exists');
-
-		$ans = $bdd->prepare('INSERT INTO users (nom,prenom,psuedo,email,ddn,password,poste,status) VALUES (?,?,?,?,?,?,?,?)');
-		if($ans->execute(array($_POST['nom'],$_POST['pnom'],$_POST['psuedo'],$_POST['email'],$_POST['ddn'],$_POST['password'],$_POST['poste'],$status)))
-			header('location:index.php?ok');
+		if($ans->fetch()[0] != '')
+		{
+			$_SESSION['get_params'] = array("error" => "compte exite déja");
+			header('location:index.php?register');
+		}
 		else
-			header('location:index.php?register&erreur = 2');
+		{
+			$ans = $bdd->prepare('INSERT INTO users (nom,prenom,psuedo,email,ddn,password,poste,status) VALUES (?,?,?,?,?,?,?,?)');
+			if($ans->execute(array($_POST['nom'],$_POST['pnom'],$_POST['psuedo'],$_POST['email'],$_POST['ddn'],$_POST['password'],$_POST['poste'],$status)))
+			{
+				$_SESSION['get_params'] = array("ok" => "compte creé avec succés");
+				header('location:index.php');
+			}
+			else
+			{
+				$_SESSION['get_params'] = array("error" => "500");
+				header('location:index.php?register');
+			}
+		}
 	}
 	//changer le mot de passe
 	else if(isset($_GET['edit_pass']))
@@ -528,7 +551,8 @@
 		}
 		else
 		{
-			header('location:index.php?error');
+			$_SESSION['get_params'] = array("error" => "mot de passe invalide ou compte non confirmé");
+			header('location:index.php');
 		}
 	}
 	//logout

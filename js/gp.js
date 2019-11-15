@@ -1,6 +1,6 @@
-var sel1 = document.querySelector('#F');
-var sel2 = document.querySelector('#SF');
-var options2 = sel2.querySelectorAll('option');
+var sel1;
+var sel2;
+var options2;
 var b = 1;
 
 function giveSelection(selValue)
@@ -11,11 +11,18 @@ function giveSelection(selValue)
     if(options2[i].dataset.option === selValue) 
     {
       sel2.appendChild(options2[i]);
-   }
+    }
   }
 }
 
-giveSelection(sel1.value);
+function init_select()
+{
+  sel1 = document.querySelector('#F');
+  sel2 = document.querySelector('#SF');
+  options2 = querySelectorAll('option');
+}
+
+//giveSelection(sel1.value);
 
 
 function pass_check(id1,id2,ref)
@@ -44,9 +51,9 @@ function conf()
   }
 }
 
-function check_val(elm)
+function check_val()
 {
-  if(elm.nextSibling.nextSibling.nextSibling.nextSibling.value.length == 0)
+  if(document.querySelector("#mag_dest").selectedIndex == 0)
   {
     var btn = document.querySelector("#entrer_btn");
     btn.type = "hidden";
@@ -93,6 +100,7 @@ function recherche(inp)
   xhr.send("str=" + inp.value);
   var response =  xhr.response.toString();
   response = response.split(':');
+
   
   var option = document.createElement("option");
   var select = document.querySelector("#select_art");

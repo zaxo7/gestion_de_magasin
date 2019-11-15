@@ -29,7 +29,7 @@ if(!isset($_SESSION['flag'])) $_SESSION['flag']=1;
 						foreach ($_SESSION['SF'][$i] as $SF_raw) 
 						{
 							if($SF_raw[2] != '')
-								echo  '<li>' . $SF_raw[1] . '<a href="action.php?del_SF=' . $SF_raw[0] . '" onclick="return confirm(\'Êtes-vous sûr ?\')">&nbsp&nbspX</a></li>';
+								echo  '<li>' . $SF_raw[1] . '<a href="action.php?del_SF=' . $SF_raw[0] . '&F=' . $F_raw[0] . '" onclick="return confirm(\'Êtes-vous sûr ?\')">&nbsp&nbspX</a></li>';
 						}
 						echo "<li><a href='index.php?add_SF&$F_raw[1]'>ajouter une sous famille</a></li>	</ul>";
 						$i++;
@@ -39,6 +39,8 @@ if(!isset($_SESSION['flag'])) $_SESSION['flag']=1;
 				$_SESSION['flag'] = 1;
 				unset($_SESSION['SF']);
 				unset($_SESSION['F']);
+
+				include("include/error.php");
 			}
 		?>
 		<li><a href="index.php?add_F">ajouter une famille</a></li>

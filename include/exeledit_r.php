@@ -5,33 +5,35 @@ require_once("phpSpreadSheet/vendor/autoload.php");
 
 
 
-$spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load("../data/BSMP.xls");
+$spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load("../data/BRMP.xls");
 $sheet = $spreadsheet->getActiveSheet();
 
 $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
 $drawing->setName('header');
 $drawing->setDescription('header');
-$drawing->setPath('../images/BSMP.png'); // put your path and image here
+$drawing->setPath('../images/BRMP.png'); // put your path and image here
 $drawing->setCoordinates('A1');
-$drawing->setWidth(1208);
+$drawing->setWidth(1039);
 $drawing->getShadow()->setVisible(true);
 $drawing->getShadow()->setDirection(45);
 $drawing->setWorksheet($sheet);
 
 //fusion des cellules
-$sheet->mergecells("A13:B13");
-$sheet->mergecells("D13:E13");
-$sheet->mergecells("F13:G13");
+/*$sheet->mergecells("A13:B13");
+$sheet->mergecells("F13:G13");*/
 
+//$sheet->mergecells("F7:H7");
 
 //Inserer dans les cellules
-$sheet->setCellValue('A13', $_SESSION['mag_dst'][0]);
-$sheet->setCellValue('C13', $_SESSION['mag_dst'][1]);
-$sheet->setCellValue('F13', $_SESSION['mag_dst'][2]);
-$sheet->setCellValue('H13', $_SESSION['chef_dst'][1] . ' ' . $_SESSION['chef_dst'][2]);
+$sheet->setCellValue('A10', $_SESSION['mag_src'][0]);
+$sheet->setCellValue('C10', $_SESSION['mag_src'][1]);
+$sheet->setCellValue('F10', $_SESSION['mag_src'][2]);
+$sheet->setCellValue('H10', $_SESSION['chef_src'][1] . ' ' . $_SESSION['chef_src'][2]);
+
+$sheet->setCellValue('F7', date("d/m/Y"));
 
 
-$sheet->setCellValue('H9', date("d/m/Y"));
+//$sheet->setCellValue('A13', $_SESSION['mag_src_four'][1] . ' ' . $_SESSION['mag_src_four'][2]);
 
 
 
@@ -76,7 +78,7 @@ unset($_SESSION['chef_src']);
 
 
 
-if(copy('../data/tmp.xlsx','../data/BSMP/' . md5(time()) . '.xlsx') && rename("../data/tmp.xlsx","../data/tmp.old"))
+if(copy('../data/tmp.xlsx','../data/BRMP/' . md5(time()) . '.xlsx') && rename("../data/tmp.xlsx","../data/tmp.old"))
 {
 	header('location:../' . $_SESSION['referer'] . '&ok');
 }
@@ -84,5 +86,4 @@ else
 {
 	header('location:../' . $_SESSION['referer'] . '&error');
 }
-
-?>
+	

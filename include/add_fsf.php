@@ -21,7 +21,7 @@ if(!isset($_SESSION['flag'])) $_SESSION['flag'] = 1;
 		Famille</h1>
 
 		<form action="action.php?add_<?php if($tmp) echo 'S'; ?>F" method="post">
-			<label>Nom<input type="text" name="nom" required></label>
+			<label>Nom<input type="text" name="nom" required autofocus></label>
 			<label>Cod<input type="text" name="code" required maxlength="<?php if($tmp) echo '2'; else echo '1'; ?>"></label>
 			<?php 
 				if($tmp)
@@ -55,9 +55,16 @@ if(!isset($_SESSION['flag'])) $_SESSION['flag'] = 1;
 							}
 						}
 						echo "</select></label>";
+
+
 					}
 				}
 				unset($_SESSION['F']);
+
+				if($_SESSION['flag'])
+				{
+					include("include/error.php");
+				}
 			?>
 			<br>
 			<input type="submit" value="ajouter">

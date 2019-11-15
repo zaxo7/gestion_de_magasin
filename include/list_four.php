@@ -33,6 +33,10 @@ if(!isset($_SESSION['flag'])) $_SESSION['flag'] = 1; ?>
 					$_SESSION['flag'] = 1;
 					//supprimer les données chargée
 					unset($_SESSION['four']);
+
+
+					include('include/error.php');
+
 				}
 
 			?>

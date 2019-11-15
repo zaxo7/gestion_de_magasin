@@ -2,7 +2,7 @@
 <div>
 	<form action="action.php?add_four" method="post">
 		<br>
-		<label>Nom<input type="text" name="nom" required></label>
+		<label>Nom<input type="text" name="nom" required autofocus></label>
 		<label>Prenom<input type="text" name="prenom" required></label>
 		<label>adresse<input type="text" name="adresse" required></label>
 		<input type="submit" value="ajouter">

@@ -24,6 +24,7 @@ if(!isset($_SESSION['flag'])) $_SESSION['flag'] = 1;
 			else
 			{
 				$_SESSION['referer'] = 'index.php?list_stock=' . $_GET['list_stock'] . '&mag=' . $_GET['mag'];
+				
 				$_SESSION['get_params'] = $_GET;
 				header('location:action.php?list_stock=' . $_GET['list_stock']);
 			}
@@ -71,15 +72,15 @@ if(!isset($_SESSION['flag'])) $_SESSION['flag'] = 1;
 				if($_GET['list_stock'] != 1)
 				{
 					echo "<input id='entrer_btn' type='submit' name='entrer' value='entrer(affaire -> magasin centrale)' onclick='return hide_trans()' ><br>";
-					echo "<input id='transfert_btn'  type='submit' name='transfert' value='transfert(cet affaire->affaire)' onclick='return check_val(this)'><br><br>";
+					echo "<input id='transfert_btn'  type='submit' name='transfert' value='transfert(cet affaire->affaire)' onclick='return check_val()'><br><br>";
 				}
 				else
 				{
 					echo "<input type='hidden' name='entrer' value='entrer(affaire -> magasin centrale)' ><br>";
-					echo "<input id='sortie_btn'  type='submit' name='sortie' value='sortie(Magasin centrale->affaire)' onclick='return check_val(this)'><br><br>";
+					echo "<input id='sortie_btn'  type='submit' name='sortie' value='sortie(Magasin centrale->affaire)' onclick='return check_val()'><br><br>";
 				}
-				echo "<select name='mag_dest' onchange='hide_entrer(this);'>";
-				echo "<option value=''></option>";
+				echo "<select id='mag_dest' name='mag_dest' onchange='hide_entrer(this);'>";
+				echo "<option value=''>Magasin Destination</option>";
 				foreach ($_SESSION['Mag'] as $mag) {
 					if($mag[0] != '' && $mag[0] != 1 && $mag[0] != $_GET['list_stock'])
 						echo "<option value='" . $mag[1] . "'>" . $mag[1] . "</option>";
@@ -118,6 +119,9 @@ if(!isset($_SESSION['flag'])) $_SESSION['flag'] = 1;
 			unset($_SESSION['Mag']);
 			//initialiser pour la prochaine fois
 			$_SESSION['flag'] = 1;
+
+			include("include/error.php");
+
 		}
 
 		?>

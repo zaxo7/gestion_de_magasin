@@ -38,6 +38,11 @@ $sheet->setCellValue('F14', $_SESSION['mag_dst'][2]);
 $sheet->setCellValue('H14', $_SESSION['chef_dst'][1] . ' ' . $_SESSION['chef_dst'][2]);
 
 
+
+$sheet->setCellValue('H7', date("d/m/Y"));
+
+
+
 $total_HT = 0;
 
 $line = 17;
@@ -74,9 +79,13 @@ unset($_SESSION['chef_src']);
 
 
 
-if(copy('../data/tmp.xlsx','../data/BTMP/' . md5(time()) . '.xlsx'))
+if(copy('../data/tmp.xlsx','../data/BTMP/' . md5(time()) . '.xlsx') && rename("../data/tmp.xlsx","../data/tmp.old"))
 {
-	header('location:../' . $_SESSION['referer']);
+	header('location:../' . $_SESSION['referer'] . '&ok');
+}
+else
+{
+	header('location:../' . $_SESSION['referer'] . '&error');
 }
 
 ?>
